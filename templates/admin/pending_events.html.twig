@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pending Events - Admin Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Admin Pending Events Header Section -->
+    <section class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">Pending Events</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('admin_dashboard') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Pending Events Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Admin Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm">
+                        <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('admin_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> Manage Events
+                        </a>
+                        <a href="{{ path('admin_events_pending') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-hourglass-split me-2"></i> Pending Events
+                        </a>
+                        <a href="{{ path('admin_users') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
+                        <a href="{{ path('admin_categories') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-tag me-2"></i> Manage Categories
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Admin Pending Events Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Events Awaiting Approval</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if pendingEvents|length > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Title</th>
+                                                <th>Category</th>
+                                                <th>Organizer</th>
+                                                <th>Date</th>
+                                                <th>Created</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for event in pendingEvents %}
+                                                <tr>
+                                                    <td>{{ event.id }}</td>
+                                                    <td>{{ event.title }}</td>
+                                                    <td>{{ event.category.name }}</td>
+                                                    <td>{{ event.organizer.name }}</td>
+                                                    <td>{{ event.date|date('M d, Y') }}</td>
+                                                    <td>{{ event.createdAt|date('M d, Y') }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary" 
+                                                               data-bs-toggle="tooltip" title="View Event">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                            <form method="post" action="{{ path('admin_event_approve', {'id': event.id}) }}" class="d-inline">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ event.id) }}">
+                                                                <button type="submit" class="btn btn-sm btn-outline-success"
+                                                                       data-bs-toggle="tooltip" title="Approve Event">
+                                                                    <i class="bi bi-check-lg"></i>
+                                                                </button>
+                                                            </form>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ event.id }}"
+                                                                    title="Delete Event">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        
+                                                        <!-- Delete Modal -->
+                                                        <div class="modal fade" id="deleteModal{{ event.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ event.id }}" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteModalLabel{{ event.id }}">Confirm Delete</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>Are you sure you want to delete the event "{{ event.title }}"?</p>
+                                                                        <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <form method="post" action="{{ path('event_delete', {'id': event.id}) }}">
+                                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                                                                            <button type="submit" class="btn btn-danger">Delete Event</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <p class="mb-0 text-center">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        No pending events! All events have been approved.
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+{% endblock %}

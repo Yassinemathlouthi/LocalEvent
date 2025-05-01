@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create New Event - LocalEvent{% endblock %}
+
+{% block body %}
+    <!-- Create Event Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Create New Event</h3>
+                        </div>
+                        <div class="card-body">
+                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                <div class="mb-3">
+                                    {{ form_label(form.title) }}
+                                    {{ form_widget(form.title) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.title) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.description) }}
+                                    {{ form_widget(form.description) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.description) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(form.date) }}
+                                        {{ form_widget(form.date) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(form.date) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(form.category) }}
+                                        {{ form_widget(form.category) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(form.category) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.location) }}
+                                    {{ form_widget(form.location) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.location) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_label(form.imageFile) }}
+                                    {{ form_widget(form.imageFile) }}
+                                    <div class="form-text">Upload a poster image for your event (optional).</div>
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.imageFile) }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="bi bi-check-circle me-2"></i> Create Event
+                                    </button>
+                                    <a href="{{ path('event_index') }}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-arrow-left me-2"></i> Back to Events
+                                    </a>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

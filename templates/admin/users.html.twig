@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Users - Admin Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Admin Users Header Section -->
+    <section class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">Manage Users</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('admin_dashboard') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Users Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Admin Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm">
+                        <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('admin_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> Manage Events
+                        </a>
+                        <a href="{{ path('admin_events_pending') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-hourglass-split me-2"></i> Pending Events
+                        </a>
+                        <a href="{{ path('admin_users') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
+                        <a href="{{ path('admin_categories') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-tag me-2"></i> Manage Categories
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Admin Users Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">All Users</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if users|length > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Location</th>
+                                                <th>Role</th>
+                                                <th>Joined</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for user in users %}
+                                                <tr>
+                                                    <td>{{ user.id }}</td>
+                                                    <td>{{ user.name }}</td>
+                                                    <td>{{ user.email }}</td>
+                                                    <td>{{ user.location|default('Not specified') }}</td>
+                                                    <td>
+                                                        {% if 'ROLE_ADMIN' in user.roles %}
+                                                            <span class="badge bg-danger">Admin</span>
+                                                        {% else %}
+                                                            <span class="badge bg-secondary">User</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ user.createdAt|date('M d, Y') }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <form method="post" action="{{ path('admin_user_toggle_role', {'id': user.id}) }}" class="d-inline">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('role' ~ user.id) }}">
+                                                                {% if 'ROLE_ADMIN' in user.roles %}
+                                                                    <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                                           data-bs-toggle="tooltip" title="Remove Admin Role">
+                                                                        <i class="bi bi-person-dash"></i>
+                                                                    </button>
+                                                                {% else %}
+                                                                    <button type="submit" class="btn btn-sm btn-outline-primary"
+                                                                           data-bs-toggle="tooltip" title="Make Admin">
+                                                                        <i class="bi bi-person-plus"></i>
+                                                                    </button>
+                                                                {% endif %}
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <p class="mb-0 text-center">No users found.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+{% endblock %}

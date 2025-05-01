@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.id ? 'Edit Category' : 'New Category' }} - Admin Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Admin Category Form Header Section -->
+    <section class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">{{ category.id ? 'Edit Category' : 'New Category' }}</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('admin_categories') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Categories
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Category Form Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Admin Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm">
+                        <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('admin_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> Manage Events
+                        </a>
+                        <a href="{{ path('admin_events_pending') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-hourglass-split me-2"></i> Pending Events
+                        </a>
+                        <a href="{{ path('admin_users') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
+                        <a href="{{ path('admin_categories') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-tag me-2"></i> Manage Categories
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Admin Category Form Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">{{ category.id ? 'Edit Category Details' : 'Create New Category' }}</h5>
+                        </div>
+                        <div class="card-body">
+                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                <div class="mb-3">
+                                    {{ form_label(form.name) }}
+                                    {{ form_widget(form.name) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.name) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.description) }}
+                                    {{ form_widget(form.description) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.description) }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="bi bi-check-circle me-2"></i> 
+                                        {{ category.id ? 'Update Category' : 'Create Category' }}
+                                    </button>
+                                    <a href="{{ path('admin_categories') }}" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-2"></i> Cancel
+                                    </a>
+                                </div>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

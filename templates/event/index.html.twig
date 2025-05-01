@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}All Events - LocalEvent{% endblock %}
+
+{% block body %}
+    <!-- Events Header Section -->
+    <section class="bg-primary text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">All Events</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('event_new') }}" class="btn btn-light">
+                            <i class="bi bi-plus-circle me-1"></i> Create Event
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-light">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Login to Create Event
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events List Section -->
+    <section class="py-5">
+        <div class="container">
+            {% if events|length > 0 %}
+                <div class="row g-4">
+                    {% for event in events %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card event-card shadow-sm h-100">
+                                {% if event.image %}
+                                    <img src="{{ vich_uploader_asset(event, 'imageFile') }}" class="card-img-top" alt="{{ event.title }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light text-center py-5">
+                                        <i class="bi bi-calendar-event display-4 text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">{{ event.category.name }}</span>
+                                        <small class="text-muted ms-2">
+                                            <i class="bi bi-calendar me-1"></i>{{ event.date|date('M d, Y') }}
+                                        </small>
+                                    </div>
+                                    <h5 class="card-title">{{ event.title }}</h5>
+                                    <p class="card-text text-truncate">{{ event.description }}</p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ event.location }}
+                                            </small>
+                                            <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-primary">
+                                                View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p class="mb-0 text-center">No events found.</p>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{{ path('event_new') }}" class="btn btn-primary">Create the first event</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

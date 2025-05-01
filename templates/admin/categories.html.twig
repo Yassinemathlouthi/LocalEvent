@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Categories - Admin Dashboard{% endblock %}
+
+{% block body %}
+    <!-- Admin Categories Header Section -->
+    <section class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">Manage Categories</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('admin_dashboard') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Categories Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Admin Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm">
+                        <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('admin_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> Manage Events
+                        </a>
+                        <a href="{{ path('admin_events_pending') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-hourglass-split me-2"></i> Pending Events
+                        </a>
+                        <a href="{{ path('admin_users') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
+                        <a href="{{ path('admin_categories') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-tag me-2"></i> Manage Categories
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Admin Categories Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Categories</h5>
+                            <a href="{{ path('admin_category_new') }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-circle me-1"></i> Add Category
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            {% if categories|length > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Description</th>
+                                                <th>Events</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for category in categories %}
+                                                <tr>
+                                                    <td>{{ category.id }}</td>
+                                                    <td>{{ category.name }}</td>
+                                                    <td>
+                                                        {% if category.description %}
+                                                            {{ category.description|length > 50 ? category.description|slice(0, 50) ~ '...' : category.description }}
+                                                        {% else %}
+                                                            <span class="text-muted">No description</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ category.events|length }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <a href="{{ path('admin_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-outline-primary"
+                                                               data-bs-toggle="tooltip" title="Edit Category">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}"
+                                                                    title="Delete Category" {{ category.events|length > 0 ? 'disabled' : '' }}>
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                        
+                                                        <!-- Delete Modal -->
+                                                        <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ category.id }}" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteModalLabel{{ category.id }}">Confirm Delete</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <p>Are you sure you want to delete the category "{{ category.name }}"?</p>
+                                                                        {% if category.events|length > 0 %}
+                                                                            <div class="alert alert-danger">
+                                                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                                                Cannot delete this category because it has {{ category.events|length }} associated events.
+                                                                            </div>
+                                                                        {% else %}
+                                                                            <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        {% if category.events|length == 0 %}
+                                                                            <form method="post" action="{{ path('admin_category_delete', {'id': category.id}) }}">
+                                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                                                                <button type="submit" class="btn btn-danger">Delete Category</button>
+                                                                            </form>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <p class="mb-0 text-center">No categories found.</p>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a href="{{ path('admin_category_new') }}" class="btn btn-primary">
+                                        <i class="bi bi-plus-circle me-1"></i> Create First Category
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+    </script>
+{% endblock %}

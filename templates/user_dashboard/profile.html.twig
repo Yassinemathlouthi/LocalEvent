@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile - LocalEvent{% endblock %}
+
+{% block body %}
+    <!-- Profile Header Section -->
+    <section class="bg-primary text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">My Profile</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('app_dashboard') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Dashboard Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm">
+                        <a href="{{ path('app_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-person me-2"></i> My Profile
+                        </a>
+                        <a href="{{ path('app_my_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> My Events
+                        </a>
+                        <a href="{{ path('app_attending') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-check me-2"></i> Events I'm Attending
+                        </a>
+                        <a href="{{ path('event_new') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-plus-circle me-2"></i> Create Event
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Profile Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="mb-0">Edit Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            {{ form_start(profileForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(profileForm.name) }}
+                                        {{ form_widget(profileForm.name) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(profileForm.name) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(profileForm.email) }}
+                                        {{ form_widget(profileForm.email) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(profileForm.email) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(profileForm.location) }}
+                                    {{ form_widget(profileForm.location) }}
+                                    <div class="form-text">Enter your city or area to help us suggest nearby events.</div>
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(profileForm.location) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_label(profileForm.interests) }}
+                                    <div class="interests-container" 
+                                         data-prototype="{{ form_widget(profileForm.interests.vars.prototype)|e }}"
+                                         data-widget-counter="{{ profileForm.interests|length }}">
+                                        {% for interestField in profileForm.interests %}
+                                            <div class="interest-item input-group mb-2">
+                                                {{ form_widget(interestField) }}
+                                                <button type="button" class="btn btn-outline-danger remove-interest">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-interest mt-2">
+                                        <i class="bi bi-plus-circle me-1"></i> Add Interest
+                                    </button>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-2"></i> Save Changes
+                                    </button>
+                                </div>
+                            {{ form_end(profileForm) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle dynamic form collection for interests
+            const interestsContainer = document.querySelector('.interests-container');
+            if (interestsContainer) {
+                // Add new interest
+                document.querySelector('.add-interest').addEventListener('click', function() {
+                    const prototype = interestsContainer.dataset.prototype;
+                    const counter = interestsContainer.dataset.widgetCounter;
+                    
+                    // Create new interest item
+                    const newItem = document.createElement('div');
+                    newItem.className = 'interest-item input-group mb-2';
+                    newItem.innerHTML = prototype.replace(/__name__/g, counter) + 
+                                       '<button type="button" class="btn btn-outline-danger remove-interest">' +
+                                       '<i class="bi bi-trash"></i></button>';
+                    
+                    interestsContainer.appendChild(newItem);
+                    interestsContainer.dataset.widgetCounter = parseInt(counter) + 1;
+                    
+                    // Add remove event listener to the newly created button
+                    newItem.querySelector('.remove-interest').addEventListener('click', function() {
+                        newItem.remove();
+                    });
+                });
+                
+                // Remove interest (for existing buttons)
+                document.querySelectorAll('.remove-interest').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        button.closest('.interest-item').remove();
+                    });
+                });
+            }
+        });
+    </script>
+{% endblock %}

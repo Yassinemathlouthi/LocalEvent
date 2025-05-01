@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register - LocalEvent{% endblock %}
+
+{% block body %}
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">Create an Account</h3>
+                        </div>
+                        <div class="card-body">
+                            {{ form_start(registrationForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(registrationForm.name) }}
+                                        {{ form_widget(registrationForm.name) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(registrationForm.name) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(registrationForm.email) }}
+                                        {{ form_widget(registrationForm.email) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(registrationForm.email) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(registrationForm.location) }}
+                                    {{ form_widget(registrationForm.location) }}
+                                    <div class="form-text">This helps us suggest events near you (optional).</div>
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(registrationForm.location) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(registrationForm.plainPassword.first) }}
+                                        {{ form_widget(registrationForm.plainPassword.first) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(registrationForm.plainPassword.first) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form_label(registrationForm.plainPassword.second) }}
+                                        {{ form_widget(registrationForm.plainPassword.second) }}
+                                        <div class="invalid-feedback">
+                                            {{ form_errors(registrationForm.plainPassword.second) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 form-check">
+                                    {{ form_widget(registrationForm.agreeTerms) }}
+                                    {{ form_label(registrationForm.agreeTerms) }}
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(registrationForm.agreeTerms) }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-person-plus me-2"></i> Register
+                                    </button>
+                                </div>
+                            {{ form_end(registrationForm) }}
+                            
+                            <div class="mt-4 text-center">
+                                <p class="mb-0">Already have an account? <a href="{{ path('app_login') }}">Log in</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

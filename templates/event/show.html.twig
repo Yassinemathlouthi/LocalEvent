@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.title }} - LocalEvent{% endblock %}
+
+{% block body %}
+    <!-- Event Details Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Event Image Column -->
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="card shadow-sm">
+                        {% if event.image %}
+                            <img src="{{ vich_uploader_asset(event, 'imageFile') }}" class="card-img-top" alt="{{ event.title }}" style="height: 400px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light text-center py-5" style="height: 400px;">
+                                <i class="bi bi-calendar-event display-1 text-muted mt-5"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Event Info Column -->
+                <div class="col-lg-6">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="mb-0">{{ event.title }}</h1>
+                        {% if is_granted('ROLE_ADMIN') or (app.user and app.user == event.organizer) %}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ path('event_edit', {'id': event.id}) }}">
+                                            <i class="bi bi-pencil me-2"></i> Edit Event
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form method="post" action="{{ path('event_delete', {'id': event.id}) }}" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                                            <button class="dropdown-item text-danger">
+                                                <i class="bi bi-trash me-2"></i> Delete Event
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="badge bg-primary">{{ event.category.name }}</span>
+                        {% if not event.isApproved %}
+                            <span class="badge bg-warning text-dark ms-2">Pending Approval</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Event Details</h5>
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-calendar-event text-primary me-3 fs-4"></i>
+                                    <div>
+                                        <div class="fw-bold">Date & Time</div>
+                                        <div>{{ event.date|date('F d, Y - h:i a') }}</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-geo-alt text-primary me-3 fs-4"></i>
+                                    <div>
+                                        <div class="fw-bold">Location</div>
+                                        <div>{{ event.location }}</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person text-primary me-3 fs-4"></i>
+                                    <div>
+                                        <div class="fw-bold">Organizer</div>
+                                        <div>{{ event.organizer.name }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if app.user and not isAttending and app.user != event.organizer %}
+                                <form method="post" action="{{ path('event_join', {'id': event.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('join' ~ event.id) }}">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-calendar-check me-2"></i> Join This Event
+                                    </button>
+                                </form>
+                            {% elseif app.user and isAttending %}
+                                <form method="post" action="{{ path('event_leave', {'id': event.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('leave' ~ event.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        <i class="bi bi-calendar-x me-2"></i> Cancel Attendance
+                                    </button>
+                                </form>
+                            {% elseif not app.user %}
+                                <a href="{{ path('app_login') }}" class="btn btn-primary w-100">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i> Login to Join Event
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Attendees ({{ attendees|length }})</h5>
+                            {% if attendees|length > 0 %}
+                                <div class="d-flex flex-wrap">
+                                    {% for attendance in attendees %}
+                                        <div class="me-2 mb-2">
+                                            <span class="badge bg-light text-dark p-2 border">
+                                                <i class="bi bi-person-circle me-1"></i>
+                                                {{ attendance.user.name }}
+                                            </span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mb-0">No attendees yet. Be the first to join!</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Event Description Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">About This Event</h5>
+                            <div class="event-description">
+                                {{ event.description|nl2br }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Back Button -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <a href="{{ path('event_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

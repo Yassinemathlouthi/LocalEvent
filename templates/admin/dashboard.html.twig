@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard - LocalEvent{% endblock %}
+
+{% block body %}
+    <!-- Admin Dashboard Header Section -->
+    <section class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">Admin Dashboard</h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ path('app_home') }}" class="btn btn-light">
+                        <i class="bi bi-house me-1"></i> View Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Dashboard Content Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Admin Sidebar -->
+                <div class="col-lg-3 mb-4 mb-lg-0">
+                    <div class="list-group shadow-sm mb-4">
+                        <a href="{{ path('admin_dashboard') }}" class="list-group-item list-group-item-action active">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                        <a href="{{ path('admin_events') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-calendar-event me-2"></i> Manage Events
+                        </a>
+                        <a href="{{ path('admin_events_pending') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-hourglass-split me-2"></i> Pending Events
+                            <span class="badge bg-danger rounded-pill float-end">{{ pendingEventsCount }}</span>
+                        </a>
+                        <a href="{{ path('admin_users') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-people me-2"></i> Manage Users
+                        </a>
+                        <a href="{{ path('admin_categories') }}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-tag me-2"></i> Manage Categories
+                        </a>
+                    </div>
+                    <div class="card bg-primary text-white shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Welcome, Admin!</h5>
+                            <p class="card-text">You have {{ pendingEventsCount }} events waiting for approval.</p>
+                            <a href="{{ path('admin_events_pending') }}" class="btn btn-light btn-sm">Review Now</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Dashboard Main Content -->
+                <div class="col-lg-9">
+                    <!-- Statistics Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="card-subtitle mb-2 text-white-50">Total Events</h6>
+                                            <h2 class="card-title mb-0">{{ totalEventsCount }}</h2>
+                                        </div>
+                                        <i class="bi bi-calendar-event fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top border-white border-opacity-25">
+                                    <a href="{{ path('admin_events') }}" class="text-white text-decoration-none">
+                                        <small>View Details <i class="bi bi-arrow-right ms-1"></i></small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="card-subtitle mb-2 text-white-50">Total Users</h6>
+                                            <h2 class="card-title mb-0">{{ totalUsersCount }}</h2>
+                                        </div>
+                                        <i class="bi bi-people fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top border-white border-opacity-25">
+                                    <a href="{{ path('admin_users') }}" class="text-white text-decoration-none">
+                                        <small>View Details <i class="bi bi-arrow-right ms-1"></i></small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-info text-white shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="card-subtitle mb-2 text-white-50">Total Attendances</h6>
+                                            <h2 class="card-title mb-0">{{ attendanceStats.totalAttendances|default(0) }}</h2>
+                                        </div>
+                                        <i class="bi bi-person-check fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent border-top border-white border-opacity-25">
+                                    <small>Event Registrations</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pending Events Card -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Pending Events</h5>
+                            <a href="{{ path('admin_events_pending') }}" class="btn btn-sm btn-primary">View All</a>
+                        </div>
+                        <div class="card-body">
+                            {% if pendingEventsCount > 0 %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    There are {{ pendingEventsCount }} events waiting for your approval.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    There are no pending events requiring approval.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Users & Popular Events -->
+                    <div class="row">
+                        <!-- Recent Users -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Recent Users</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        {% if latestUsers|length > 0 %}
+                                            {% for user in latestUsers %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>{{ user.name }}</strong>
+                                                        <br>
+                                                        <small class="text-muted">{{ user.email }}</small>
+                                                    </div>
+                                                    <small class="text-muted">{{ user.createdAt|date('M d, Y') }}</small>
+                                                </li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li class="list-group-item text-center py-4">
+                                                <span class="text-muted">No users yet</span>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a href="{{ path('admin_users') }}" class="btn btn-sm btn-outline-primary">View All Users</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Popular Events -->
+                        <div class="col-md-6 mb-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Popular Events</h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        {% if attendanceStats.mostPopularEvents is defined and attendanceStats.mostPopularEvents|length > 0 %}
+                                            {% for event in attendanceStats.mostPopularEvents %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>{{ event.title }}</strong>
+                                                    </div>
+                                                    <span class="badge bg-primary">{{ event.attendeeCount }} attendees</span>
+                                                </li>
+                                            {% endfor %}
+                                        {% else %}
+                                            <li class="list-group-item text-center py-4">
+                                                <span class="text-muted">No data available</span>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a href="{{ path('admin_events') }}" class="btn btn-sm btn-outline-primary">View All Events</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
