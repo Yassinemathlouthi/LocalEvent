@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
+use App\Security\LoginFormAuthenticator;
 
 class SecurityController extends AbstractController
 {
@@ -45,7 +47,9 @@ class SecurityController extends AbstractController
         Request $request, 
         UserPasswordHasherInterface $userPasswordHasher, 
         EntityManagerInterface $entityManager,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        UserAuthenticatorInterface $userAuthenticator,
+        LoginFormAuthenticator $authenticator
     ): Response
     {
         // If already logged in, redirect to homepage
@@ -57,23 +61,50 @@ class SecurityController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-
-            $entityManager->persist($user);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            // Check if there's a user with this email already
+            $existingUser = $entityManager->getRepository(User::class)->findOneBy([
+                'email' => $form->get('email')->getData()
+            ]);
             
-            // Send welcome email
-            $notificationService->sendWelcomeEmail($user);
+            if ($existingUser) {
+                $this->addFlash('danger', 'This email is already in use. Please use a different email or login with your existing account.');
+                return $this->render('security/register.html.twig', [
+                    'registrationForm' => $form->createView(),
+                ]);
+            }
+            
+            if ($form->isValid()) {
+                try {
+                    // Encode the plain password
+                    $user->setPassword(
+                        $userPasswordHasher->hashPassword(
+                            $user,
+                            $form->get('plainPassword')->getData()
+                        )
+                    );
 
-            $this->addFlash('success', 'Your account has been created. You can now log in.');
-            return $this->redirectToRoute('app_login');
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    
+                    // Send welcome email
+                    $notificationService->sendWelcomeEmail($user);
+
+                    // Auto login after registration
+                    $this->addFlash('success', 'Account created successfully! You are now logged in.');
+                    
+                    return $userAuthenticator->authenticateUser(
+                        $user,
+                        $authenticator,
+                        $request
+                    );
+                } catch (\Exception $e) {
+                    $this->addFlash('danger', 'An error occurred during registration. Please try again.');
+                    
+                    // Log the error for administrators
+                    error_log('Registration error: ' . $e->getMessage());
+                }
+            }
         }
 
         return $this->render('security/register.html.twig', [

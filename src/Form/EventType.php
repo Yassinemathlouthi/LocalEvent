@@ -6,12 +6,13 @@ use App\Entity\Category;
 use App\Entity\Event;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class EventType extends AbstractType
 {
@@ -33,8 +34,14 @@ class EventType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('date', DateTimeType::class, [
-                'label' => 'Event Date and Time',
+            ->add('date', DateType::class, [
+                'label' => 'Event Date',
+                'widget' => 'single_text',
+                'html5' => true,
+                'attr' => ['class' => 'form-control']
+            ])
+            ->add('time', TimeType::class, [
+                'label' => 'Event Time',
                 'widget' => 'single_text',
                 'html5' => true,
                 'attr' => ['class' => 'form-control']
@@ -46,21 +53,22 @@ class EventType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('category', EntityType::class, [
+            ->add('categories', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Select a category',
                 'required' => true,
+                'multiple' => true,
+                'expanded' => false,
                 'attr' => ['class' => 'form-select']
             ])
-            ->add('imageFile', VichImageType::class, [
-                'label' => 'Event Image (JPG or PNG)',
+            ->add('image', UrlType::class, [
+                'label' => 'Event Image URL',
                 'required' => false,
-                'allow_delete' => true,
-                'download_uri' => false,
-                'image_uri' => true,
-                'asset_helper' => true,
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'placeholder' => 'Enter the URL of an image (optional)',
+                    'class' => 'form-control'
+                ]
             ])
         ;
     }

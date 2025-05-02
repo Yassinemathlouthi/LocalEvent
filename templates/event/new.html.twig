@@ -39,10 +39,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        {{ form_label(form.category) }}
-                                        {{ form_widget(form.category) }}
+                                        {{ form_label(form.time) }}
+                                        {{ form_widget(form.time) }}
                                         <div class="invalid-feedback">
-                                            {{ form_errors(form.category) }}
+                                            {{ form_errors(form.time) }}
                                         </div>
                                     </div>
                                 </div>
@@ -55,12 +55,21 @@
                                     </div>
                                 </div>
 
-                                <div class="mb-4">
-                                    {{ form_label(form.imageFile) }}
-                                    {{ form_widget(form.imageFile) }}
-                                    <div class="form-text">Upload a poster image for your event (optional).</div>
+                                <div class="mb-3">
+                                    {{ form_label(form.categories) }}
+                                    {{ form_widget(form.categories) }}
+                                    <div class="form-text">You can select multiple categories by holding Ctrl (or Cmd on Mac).</div>
                                     <div class="invalid-feedback">
-                                        {{ form_errors(form.imageFile) }}
+                                        {{ form_errors(form.categories) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    {{ form_label(form.image) }}
+                                    {{ form_widget(form.image) }}
+                                    <div class="form-text">Provide a direct URL to an image for your event (optional).</div>
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.image) }}
                                     </div>
                                 </div>
 

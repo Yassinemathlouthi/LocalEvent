@@ -3,17 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\Table(name: "app_user")]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email address.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -21,38 +20,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 100, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column]
     private array $roles = [];
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
     private ?string $location = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $interests = [];
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $profile_picture = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(type: 'datetime', options: ["default" => "CURRENT_TIMESTAMP"])]
+    private ?\DateTimeInterface $created_at = null;
 
     #[ORM\OneToMany(mappedBy: 'organizer', targetEntity: Event::class)]
     private Collection $organizedEvents;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Attendance::class, orphanRemoval: true)]
-    private Collection $attendances;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Rsvp::class)]
+    private Collection $rsvps;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class)]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->organizedEvents = new ArrayCollection();
-        $this->attendances = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
+        $this->rsvps = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->created_at = new \DateTime();
         $this->roles = ['ROLE_USER'];
     }
 
@@ -90,7 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = "ROLE_USER";
 
         return array_unique($roles);
     }
@@ -123,7 +129,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getName(): ?string
@@ -134,6 +139,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
 
         return $this;
     }
@@ -150,26 +167,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getInterests(): ?array
+    public function getProfilePicture(): ?string
     {
-        return $this->interests;
+        return $this->profile_picture;
     }
 
-    public function setInterests(?array $interests): static
+    public function setProfilePicture(?string $profile_picture): static
     {
-        $this->interests = $interests;
+        $this->profile_picture = $profile_picture;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeInterface $created_at): static
     {
-        $this->createdAt = $createdAt;
+        $this->created_at = $created_at;
 
         return $this;
     }
@@ -205,37 +222,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Attendance>
+     * @return Collection<int, Rsvp>
      */
-    public function getAttendances(): Collection
+    public function getRsvps(): Collection
     {
-        return $this->attendances;
+        return $this->rsvps;
     }
 
-    public function addAttendance(Attendance $attendance): static
+    public function addRsvp(Rsvp $rsvp): static
     {
-        if (!$this->attendances->contains($attendance)) {
-            $this->attendances->add($attendance);
-            $attendance->setUser($this);
+        if (!$this->rsvps->contains($rsvp)) {
+            $this->rsvps->add($rsvp);
+            $rsvp->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeAttendance(Attendance $attendance): static
+    public function removeRsvp(Rsvp $rsvp): static
     {
-        if ($this->attendances->removeElement($attendance)) {
+        if ($this->rsvps->removeElement($rsvp)) {
             // set the owning side to null (unless already changed)
-            if ($attendance->getUser() === $this) {
-                $attendance->setUser(null);
+            if ($rsvp->getUser() === $this) {
+                $rsvp->setUser(null);
             }
         }
 
         return $this;
     }
 
-    public function __toString(): string
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
     {
-        return $this->name ?: $this->email;
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

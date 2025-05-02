@@ -42,6 +42,9 @@ class RegistrationFormType extends AbstractType
                     new NotBlank([
                         'message' => 'Please enter an email address',
                     ]),
+                    new \Symfony\Component\Validator\Constraints\Email([
+                        'message' => 'Please enter a valid email address',
+                    ]),
                 ],
             ])
             ->add('location', TextType::class, [

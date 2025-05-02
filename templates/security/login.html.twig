@@ -14,17 +14,31 @@
                         <div class="card-body">
                             <form method="post">
                                 {% if error %}
-                                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                    <div class="alert alert-danger">
+                                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                                    </div>
                                 {% endif %}
+
+                                {% for message in app.flashes('danger') %}
+                                    <div class="alert alert-danger">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+
+                                {% for message in app.flashes('success') %}
+                                    <div class="alert alert-success">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
 
                                 <div class="mb-3">
                                     <label for="inputEmail" class="form-label">Email</label>
-                                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                                    <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label for="inputPassword" class="form-label">Password</label>
-                                    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+                                    <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
                                 </div>
                                 
                                 <div class="mb-3 form-check">

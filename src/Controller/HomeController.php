@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use App\Service\EventFilterService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,16 +18,24 @@ class HomeController extends AbstractController
         Request $request,
         EventRepository $eventRepository,
         CategoryRepository $categoryRepository,
-        EventFilterService $eventFilterService
+        EventFilterService $eventFilterService,
+        PaginatorInterface $paginator
     ): Response
     {
         // Get filter data
         $categories = $categoryRepository->findAll();
         
-        // Get events with filters
-        $events = $eventFilterService->filterEvents($request, 
-            $request->query->getInt('page', 1),
-            9 // Show 9 events per page
+        // Get page parameter
+        $page = $request->query->getInt('page', 1);
+        
+        // Get filtered events (without pagination limits)
+        $filteredEvents = $eventFilterService->getFilteredEvents($request);
+        
+        // Paginate the results
+        $events = $paginator->paginate(
+            $filteredEvents,
+            $page,
+            9 // 9 events per page
         );
         
         // Get upcoming events for sidebar

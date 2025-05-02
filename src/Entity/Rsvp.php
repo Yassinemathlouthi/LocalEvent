@@ -2,41 +2,39 @@
 
 namespace App\Entity;
 
-use App\Repository\AttendanceRepository;
+use App\Repository\RsvpRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AttendanceRepository::class)]
-class Attendance
+#[ORM\Entity(repositoryClass: RsvpRepository::class)]
+#[ORM\Table(name: "rsvp")]
+class Rsvp
 {
-    public const STATUS_JOINED = 'joined';
-    public const STATUS_CANCELLED = 'cancelled';
-    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'attendances')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(inversedBy: 'rsvps')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'attendances')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(inversedBy: 'rsvps')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $status = self::STATUS_JOINED;
+    private ?string $status = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?\DateTimeInterface $joinedAt = null;
+    private ?\DateTimeInterface $responded_at = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $note = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $joined_at = null;
 
     public function __construct()
     {
-        $this->joinedAt = new \DateTime();
+        $this->responded_at = new \DateTime();
     }
 
     public function getId(): ?int
@@ -75,8 +73,8 @@ class Attendance
 
     public function setStatus(string $status): static
     {
-        if (!in_array($status, [self::STATUS_JOINED, self::STATUS_CANCELLED])) {
-            throw new \InvalidArgumentException("Invalid status: $status");
+        if (!in_array($status, ['interested', 'going'])) {
+            throw new \InvalidArgumentException("Invalid status value");
         }
         
         $this->status = $status;
@@ -84,26 +82,26 @@ class Attendance
         return $this;
     }
 
-    public function getJoinedAt(): ?\DateTimeInterface
+    public function getRespondedAt(): ?\DateTimeInterface
     {
-        return $this->joinedAt;
+        return $this->responded_at;
     }
 
-    public function setJoinedAt(\DateTimeInterface $joinedAt): static
+    public function setRespondedAt(\DateTimeInterface $responded_at): static
     {
-        $this->joinedAt = $joinedAt;
+        $this->responded_at = $responded_at;
 
         return $this;
     }
 
-    public function getNote(): ?string
+    public function getJoinedAt(): ?\DateTimeInterface
     {
-        return $this->note;
+        return $this->joined_at;
     }
 
-    public function setNote(?string $note): static
+    public function setJoinedAt(?\DateTimeInterface $joined_at): static
     {
-        $this->note = $note;
+        $this->joined_at = $joined_at;
 
         return $this;
     }
