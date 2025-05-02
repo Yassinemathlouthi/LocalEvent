@@ -70,7 +70,15 @@
                                                 <tr>
                                                     <td>{{ event.id }}</td>
                                                     <td>{{ event.title }}</td>
-                                                    <td>{{ event.category.name }}</td>
+                                                    <td>
+                                                        {% if event.categories|length > 0 %}
+                                                            {% for category in event.categories %}
+                                                                {{ category.name }}{% if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            Uncategorized
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ event.organizer.name }}</td>
                                                     <td>{{ event.date|date('M d, Y') }}</td>
                                                     <td>{{ event.createdAt|date('M d, Y') }}</td>

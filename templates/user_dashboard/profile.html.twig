@@ -3,112 +3,220 @@
 {% block title %}My Profile - LocalEvent{% endblock %}
 
 {% block body %}
-    <!-- Profile Header Section -->
-    <section class="bg-primary text-white py-4">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="mb-0">My Profile</h1>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{{ path('app_dashboard') }}" class="btn btn-light">
-                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
-                    </a>
-                </div>
+<!-- Dashboard Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                {% include 'partials/_dashboard_sidebar.html.twig' with {'active': 'profile'} %}
             </div>
-        </div>
-    </section>
-
-    <!-- Profile Content Section -->
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <!-- Dashboard Sidebar -->
-                <div class="col-lg-3 mb-4 mb-lg-0">
-                    <div class="list-group shadow-sm">
-                        <a href="{{ path('app_dashboard') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                        </a>
-                        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action active">
-                            <i class="bi bi-person me-2"></i> My Profile
-                        </a>
-                        <a href="{{ path('app_my_events') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-calendar-event me-2"></i> My Events
-                        </a>
-                        <a href="{{ path('app_attending') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-calendar-check me-2"></i> Events I'm Attending
-                        </a>
-                        <a href="{{ path('event_new') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-plus-circle me-2"></i> Create Event
-                        </a>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Page Header Card -->
+                <div class="card shadow-sm mb-4 border-left-info">
+                    <div class="card-body py-4">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="avatar-circle bg-info text-white">
+                                    <i class="bi bi-person-badge fs-1"></i>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h4 class="mb-1 text-info">My Profile</h4>
+                                <p class="text-muted mb-0">Manage your personal information</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Profile Main Content -->
-                <div class="col-lg-9">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="mb-0">Edit Profile</h5>
+                <!-- Profile Summary -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-4 mb-md-0">
+                                <div class="profile-image-container mb-3">
+                                    {% if app.user.profilePicture %}
+                                        <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}" alt="{{ app.user.name }}" class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="avatar-circle mx-auto bg-primary text-white" style="width: 150px; height: 150px;">
+                                            <span class="display-4">{{ app.user.name|slice(0, 1)|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadProfilePicture">
+                                    <i class="bi bi-camera me-1"></i> Change Photo
+                                </button>
+                            </div>
+                            <div class="col-md-9">
+                                <h4>{{ app.user.name }}</h4>
+                                <p class="text-muted">
+                                    <i class="bi bi-envelope me-2"></i>{{ app.user.email }}
+                                </p>
+                                {% if app.user.location %}
+                                    <p class="text-muted">
+                                        <i class="bi bi-geo-alt me-2"></i>{{ app.user.location }}
+                                    </p>
+                                {% endif %}
+                                
+                                {% if app.user.interests and app.user.interests|length > 0 %}
+                                    <div class="mt-3">
+                                        <h6>Interests</h6>
+                                        <div>
+                                            {% for interest in app.user.interests %}
+                                                <span class="badge bg-light text-dark me-2 mb-2">{{ interest }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="card-body">
-                            {{ form_start(profileForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                    </div>
+                </div>
+                
+                <!-- Profile Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Edit Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                        
+                        {{ form_start(profileForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <div class="form-floating">
+                                        {{ form_widget(profileForm.name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Name'}}) }}
                                         {{ form_label(profileForm.name) }}
-                                        {{ form_widget(profileForm.name) }}
                                         <div class="invalid-feedback">
                                             {{ form_errors(profileForm.name) }}
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        {{ form_widget(profileForm.email, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Email'}}) }}
                                         {{ form_label(profileForm.email) }}
-                                        {{ form_widget(profileForm.email) }}
                                         <div class="invalid-feedback">
                                             {{ form_errors(profileForm.email) }}
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="mb-3">
+                            <div class="mb-4">
+                                <div class="form-floating">
+                                    {{ form_widget(profileForm.location, {'attr': {'class': 'form-control', 'placeholder': 'Location'}}) }}
                                     {{ form_label(profileForm.location) }}
-                                    {{ form_widget(profileForm.location) }}
-                                    <div class="form-text">Enter your city or area to help us suggest nearby events.</div>
+                                    <div class="form-text">
+                                        <i class="bi bi-geo-alt text-muted me-1"></i>
+                                        Enter your city or area to help us suggest nearby events.
+                                    </div>
                                     <div class="invalid-feedback">
                                         {{ form_errors(profileForm.location) }}
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="mb-4">
-                                    {{ form_label(profileForm.interests) }}
-                                    <div class="interests-container" 
-                                         data-prototype="{{ form_widget(profileForm.interests.vars.prototype)|e }}"
-                                         data-widget-counter="{{ profileForm.interests|length }}">
-                                        {% for interestField in profileForm.interests %}
-                                            <div class="interest-item input-group mb-2">
-                                                {{ form_widget(interestField) }}
-                                                <button type="button" class="btn btn-outline-danger remove-interest">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        {% endfor %}
+                            <div class="mb-4">
+                                <div class="card bg-light border">
+                                    <div class="card-header">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            {{ form_label(profileForm.interests) }}
+                                            <button type="button" class="btn btn-sm btn-outline-primary add-interest">
+                                                <i class="bi bi-plus-circle me-1"></i> Add
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-outline-primary add-interest mt-2">
-                                        <i class="bi bi-plus-circle me-1"></i> Add Interest
-                                    </button>
+                                    <div class="card-body">
+                                        <div class="interests-container" 
+                                             data-prototype="{{ form_widget(profileForm.interests.vars.prototype)|e }}"
+                                             data-widget-counter="{{ profileForm.interests|length }}">
+                                            {% for interestField in profileForm.interests %}
+                                                <div class="interest-item input-group mb-2">
+                                                    {{ form_widget(interestField, {'attr': {'class': 'form-control'}}) }}
+                                                    <button type="button" class="btn btn-outline-danger remove-interest">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% if profileForm.interests|length == 0 %}
+                                            <p class="text-muted mb-0">Add your interests to help us recommend relevant events.</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle me-2"></i> Save Changes
-                                    </button>
-                                </div>
-                            {{ form_end(profileForm) }}
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i> Save Changes
+                                </button>
+                            </div>
+                        {{ form_end(profileForm) }}
+                    </div>
+                </div>
+                
+                <!-- Security Card -->
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Security</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="card-subtitle mb-2">Change Password</h6>
+                                <p class="card-text text-muted">Update your password to maintain account security.</p>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{{ path('app_change_password') }}" class="btn btn-outline-dark">
+                                    <i class="bi bi-key me-1"></i> Change Password
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+    
+    <!-- Profile Picture Upload Modal -->
+    <div class="modal fade" id="uploadProfilePicture" tabindex="-1" aria-labelledby="uploadProfilePictureLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="uploadProfilePictureLabel">Upload Profile Picture</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ path('app_upload_profile_picture') }}" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="profilePicture" class="form-label">Select Image</label>
+                            <input type="file" class="form-control" id="profilePicture" name="profilePicture" accept="image/*" required>
+                            <div class="form-text">Maximum file size: 2MB. Supported formats: JPG, PNG.</div>
+                        </div>
+                        <div class="text-center my-3 d-none" id="imagePreviewContainer">
+                            <img id="imagePreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Preview">
+                        </div>
+                        <input type="hidden" name="token" value="{{ csrf_token('upload-profile-picture') }}">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-cloud-upload me-2"></i> Upload
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
 
 {% block javascripts %}
@@ -128,7 +236,7 @@
                     newItem.className = 'interest-item input-group mb-2';
                     newItem.innerHTML = prototype.replace(/__name__/g, counter) + 
                                        '<button type="button" class="btn btn-outline-danger remove-interest">' +
-                                       '<i class="bi bi-trash"></i></button>';
+                                       '<i class="bi bi-x-lg"></i></button>';
                     
                     interestsContainer.appendChild(newItem);
                     interestsContainer.dataset.widgetCounter = parseInt(counter) + 1;
@@ -137,13 +245,50 @@
                     newItem.querySelector('.remove-interest').addEventListener('click', function() {
                         newItem.remove();
                     });
+                    
+                    // Add class to the form control
+                    newItem.querySelector('input').classList.add('form-control');
+                    
+                    // Remove empty message if exists
+                    const emptyMessage = interestsContainer.closest('.card-body').querySelector('p.text-muted');
+                    if (emptyMessage) {
+                        emptyMessage.remove();
+                    }
                 });
                 
                 // Remove interest (for existing buttons)
                 document.querySelectorAll('.remove-interest').forEach(function(button) {
                     button.addEventListener('click', function() {
                         button.closest('.interest-item').remove();
+                        
+                        // If no interests left, add the empty message back
+                        if (interestsContainer.children.length === 0) {
+                            const emptyMessage = document.createElement('p');
+                            emptyMessage.className = 'text-muted mb-0';
+                            emptyMessage.textContent = 'Add your interests to help us recommend relevant events.';
+                            interestsContainer.closest('.card-body').appendChild(emptyMessage);
+                        }
                     });
+                });
+            }
+            
+            // Profile picture preview
+            const profilePictureInput = document.getElementById('profilePicture');
+            const imagePreview = document.getElementById('imagePreview');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            
+            if (profilePictureInput) {
+                profilePictureInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            imagePreview.src = e.target.result;
+                            imagePreviewContainer.classList.remove('d-none');
+                        }
+                        
+                        reader.readAsDataURL(this.files[0]);
+                    }
                 });
             }
         });

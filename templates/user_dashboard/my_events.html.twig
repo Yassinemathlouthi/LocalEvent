@@ -3,131 +3,147 @@
 {% block title %}My Events - LocalEvent{% endblock %}
 
 {% block body %}
-    <!-- My Events Header Section -->
-    <section class="bg-primary text-white py-4">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="mb-0">My Events</h1>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{{ path('event_new') }}" class="btn btn-light">
-                        <i class="bi bi-plus-circle me-1"></i> Create Event
-                    </a>
-                </div>
+<!-- Dashboard Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                {% include 'partials/_dashboard_sidebar.html.twig' with {'active': 'my_events'} %}
             </div>
-        </div>
-    </section>
-
-    <!-- My Events Content Section -->
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <!-- Dashboard Sidebar -->
-                <div class="col-lg-3 mb-4 mb-lg-0">
-                    <div class="list-group shadow-sm">
-                        <a href="{{ path('app_dashboard') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
-                        </a>
-                        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-person me-2"></i> My Profile
-                        </a>
-                        <a href="{{ path('app_my_events') }}" class="list-group-item list-group-item-action active">
-                            <i class="bi bi-calendar-event me-2"></i> My Events
-                        </a>
-                        <a href="{{ path('app_attending') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-calendar-check me-2"></i> Events I'm Attending
-                        </a>
-                        <a href="{{ path('event_new') }}" class="list-group-item list-group-item-action">
-                            <i class="bi bi-plus-circle me-2"></i> Create Event
-                        </a>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Page Header Card -->
+                <div class="card shadow-sm mb-4 border-left-primary">
+                    <div class="card-body py-4">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h4 class="mb-1 text-primary">My Events</h4>
+                                <p class="text-muted mb-0">Manage the events you've created</p>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{{ path('event_new') }}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Event
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- My Events Main Content -->
-                <div class="col-lg-9">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h5 class="mb-0">Events You've Created</h5>
-                        </div>
-                        <div class="card-body">
-                            {% if events|length > 0 %}
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
+                <!-- Events List Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">All Your Events</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if events|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Event</th>
+                                            <th>Date</th>
+                                            <th>Category</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for event in events %}
                                             <tr>
-                                                <th>Title</th>
-                                                <th>Date</th>
-                                                <th>Category</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for event in events %}
-                                                <tr>
-                                                    <td>{{ event.title }}</td>
-                                                    <td>{{ event.date|date('M d, Y') }}</td>
-                                                    <td>{{ event.category.name }}</td>
-                                                    <td>
-                                                        {% if event.isApproved %}
-                                                            <span class="badge bg-success">Approved</span>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        {% if event.image %}
+                                                            <div class="event-thumbnail me-3">
+                                                                <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}" class="rounded" width="40">
+                                                            </div>
                                                         {% else %}
-                                                            <span class="badge bg-warning text-dark">Pending</span>
+                                                            <div class="event-icon me-3 bg-light rounded p-2">
+                                                                <i class="bi bi-calendar-event text-primary"></i>
+                                                            </div>
                                                         {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group" role="group">
-                                                            <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary">
-                                                                <i class="bi bi-eye"></i>
-                                                            </a>
-                                                            <a href="{{ path('event_edit', {'id': event.id}) }}" class="btn btn-sm btn-outline-secondary">
-                                                                <i class="bi bi-pencil"></i>
-                                                            </a>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ event.id }}">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                        
-                                                        <!-- Delete Modal -->
-                                                        <div class="modal fade" id="deleteModal{{ event.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ event.id }}" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="deleteModalLabel{{ event.id }}">Confirm Delete</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <span>{{ event.title }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>{{ event.date|date('M d, Y') }}</td>
+                                                <td>
+                                                    {% if event.categories|length > 0 %}
+                                                        {% for category in event.categories %}
+                                                            <span class="badge bg-secondary">{{ category.name }}</span>
+                                                            {% if not loop.last %} {% endif %}
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        <span class="badge bg-light text-dark">Uncategorized</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if event.getIsApproved %}
+                                                        <span class="badge bg-success">Approved</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">Pending</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary" title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="{{ path('event_edit', {'id': event.id}) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ event.id }}" title="Delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <!-- Delete Modal -->
+                                                    <div class="modal fade" id="deleteModal{{ event.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ event.id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header bg-danger text-white">
+                                                                    <h5 class="modal-title" id="deleteModalLabel{{ event.id }}">Confirm Delete</h5>
+                                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="text-center mb-3">
+                                                                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
                                                                     </div>
-                                                                    <div class="modal-body">
-                                                                        <p>Are you sure you want to delete the event "{{ event.title }}"?</p>
-                                                                        <p class="text-danger"><strong>This action cannot be undone.</strong></p>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                                        <form method="post" action="{{ path('event_delete', {'id': event.id}) }}">
-                                                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
-                                                                            <button type="submit" class="btn btn-danger">Delete Event</button>
-                                                                        </form>
-                                                                    </div>
+                                                                    <p>Are you sure you want to delete the event <strong>"{{ event.title }}"</strong>?</p>
+                                                                    <p class="text-danger"><strong>This action cannot be undone and will remove all event data including attendees.</strong></p>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                    <form method="post" action="{{ path('event_delete', {'id': event.id}) }}">
+                                                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ event.id) }}">
+                                                                        <button type="submit" class="btn btn-danger">Delete Event</button>
+                                                                    </form>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-calendar-plus text-muted" style="font-size: 4rem;"></i>
                                 </div>
-                            {% else %}
-                                <div class="text-center py-4">
-                                    <i class="bi bi-calendar-x display-4 text-muted mb-3"></i>
-                                    <p class="lead">You haven't created any events yet.</p>
-                                    <a href="{{ path('event_new') }}" class="btn btn-primary mt-2">Create Your First Event</a>
-                                </div>
-                            {% endif %}
-                        </div>
+                                <h5 class="text-muted mb-3">You haven't created any events yet</h5>
+                                <p class="text-muted mb-4">Start by creating your first event to share with your community</p>
+                                <a href="{{ path('event_new') }}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Your First Event
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock %}

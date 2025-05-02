@@ -78,11 +78,19 @@
                                                 <tr>
                                                     <td>{{ event.id }}</td>
                                                     <td>{{ event.title }}</td>
-                                                    <td>{{ event.category.name }}</td>
+                                                    <td>
+                                                        {% if event.categories|length > 0 %}
+                                                            {% for category in event.categories %}
+                                                                {{ category.name }}{% if not loop.last %}, {% endif %}
+                                                            {% endfor %}
+                                                        {% else %}
+                                                            Uncategorized
+                                                        {% endif %}
+                                                    </td>
                                                     <td>{{ event.organizer.name }}</td>
                                                     <td>{{ event.date|date('M d, Y') }}</td>
                                                     <td>
-                                                        {% if event.isApproved %}
+                                                        {% if event.getIsApproved %}
                                                             <span class="badge bg-success">Approved</span>
                                                         {% else %}
                                                             <span class="badge bg-warning text-dark">Pending</span>
@@ -98,12 +106,11 @@
                                                                data-bs-toggle="tooltip" title="Edit Event">
                                                                 <i class="bi bi-pencil"></i>
                                                             </a>
-                                                            {% if not event.isApproved %}
-                                                                <form method="post" action="{{ path('admin_event_approve', {'id': event.id}) }}" class="d-inline">
+                                                            {% if not event.getIsApproved %}
+                                                                <form method="post" action="{{ path('event_approve', {'id': event.id}) }}" style="display: inline">
                                                                     <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ event.id) }}">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-success"
-                                                                           data-bs-toggle="tooltip" title="Approve Event">
-                                                                        <i class="bi bi-check-lg"></i>
+                                                                    <button type="submit" class="btn btn-sm btn-success" title="Approve">
+                                                                        <i class="bi bi-check-circle"></i>
                                                                     </button>
                                                                 </form>
                                                             {% endif %}

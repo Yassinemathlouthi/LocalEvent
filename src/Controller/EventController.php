@@ -42,14 +42,20 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // The imageFile is already handled by VichUploader
             $entityManager->persist($event);
             $entityManager->flush();
             
-            // Send notification
-            $notificationService->sendEventCreationConfirmation($event);
+            try {
+                // Send notification - with error handling
+                $notificationService->sendEventCreationConfirmation($event);
+            } catch (\Exception $e) {
+                // Log the error but don't prevent event creation
+                $this->addFlash('warning', 'Event created but confirmation email could not be sent.');
+            }
 
-            $this->addFlash('success', 'Your event has been created and is pending approval.');
-            return $this->redirectToRoute('app_dashboard', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Your event has been created successfully.');
+            return $this->redirectToRoute('event_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('event/new.html.twig', [
@@ -65,7 +71,7 @@ class EventController extends AbstractController
     ): Response
     {
         // Check if event is approved or if current user is the organizer
-        if (!$event->isIsApproved() && 
+        if (!$event->getIsApproved() && 
             (!$this->getUser() || $event->getOrganizer() !== $this->getUser()) && 
             !$this->isGranted('ROLE_ADMIN')
         ) {
@@ -104,8 +110,10 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // The imageFile is already handled by VichUploader
+            
             // Reset approval if the event is modified by the organizer and not an admin
-            if ($this->getUser() !== $event->getOrganizer() && !$this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() === $event->getOrganizer() && !$this->isGranted('ROLE_ADMIN')) {
                 $event->setIsApproved(false);
                 $this->addFlash('info', 'Your event has been updated and is pending approval again.');
             } else {
@@ -159,14 +167,20 @@ class EventController extends AbstractController
     ): Response
     {
         // Check if event is approved
-        if (!$event->isIsApproved()) {
+        if (!$event->getIsApproved()) {
             throw $this->createAccessDeniedException('You cannot join an event that has not been approved.');
+        }
+        
+        // Check if the current user is the organizer
+        if ($event->getOrganizer() === $this->getUser()) {
+            $this->addFlash('error', 'You cannot join an event you have organized.');
+            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
         }
         
         // Check if user is already attending
         if ($attendanceRepository->isAttending($this->getUser(), $event)) {
             $this->addFlash('info', 'You are already attending this event.');
-            return $this->redirectToRoute('event_show', ['id' => $event->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
         }
         
         if ($this->isCsrfTokenValid('join'.$event->getId(), $request->request->get('_token'))) {
@@ -178,13 +192,18 @@ class EventController extends AbstractController
             $entityManager->persist($attendance);
             $entityManager->flush();
             
-            // Send notification
-            $notificationService->sendEventJoinNotification($attendance);
+            try {
+                // Send notification
+                $notificationService->sendEventJoinNotification($attendance);
+            } catch (\Exception $e) {
+                // Log the error but don't prevent joining
+                $this->addFlash('warning', 'Joined successfully but notification email could not be sent.');
+            }
             
             $this->addFlash('success', 'You have successfully joined the event!');
         }
         
-        return $this->redirectToRoute('event_show', ['id' => $event->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
     }
     
     #[Route('/{id}/leave', name: 'event_leave', methods: ['POST'])]
@@ -208,10 +227,18 @@ class EventController extends AbstractController
                 $entityManager->flush();
                 
                 $this->addFlash('success', 'You have cancelled your attendance for this event.');
+            } else {
+                $this->addFlash('info', 'You are not attending this event.');
             }
         }
         
-        return $this->redirectToRoute('event_show', ['id' => $event->getId()], Response::HTTP_SEE_OTHER);
+        // Check if we need to redirect back to the attending dashboard
+        $referer = $request->headers->get('referer');
+        if ($referer && strpos($referer, 'dashboard/attending') !== false) {
+            return $this->redirectToRoute('app_attending');
+        }
+        
+        return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
     }
     
     #[Route('/by-category/{id}', name: 'event_by_category', methods: ['GET'])]

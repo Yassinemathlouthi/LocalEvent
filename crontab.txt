@@ -1,0 +1,2 @@
+# Clean up expired events every day at midnight
+0 0 * * * cd /path/to/your/project && php bin/console app:remove-expired-events >> var/log/cron.log 2>&1 

@@ -235,4 +235,20 @@ class EventRepository extends ServiceEntityRepository
         
         return $qb->getQuery();
     }
+
+    /**
+     * Find expired events (events with a date that has passed)
+     *
+     * @param \DateTime $date The date to compare against
+     * @return Event[] Returns an array of expired Event objects
+     */
+    public function findExpiredEvents(\DateTime $date): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.date < :date')
+            ->setParameter('date', $date)
+            ->orderBy('e.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

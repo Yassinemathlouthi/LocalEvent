@@ -7,8 +7,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
+#[Vich\Uploadable]
 class Event
 {
     #[ORM\Id]
@@ -47,6 +50,9 @@ class Event
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Rsvp::class, orphanRemoval: true)]
     private Collection $rsvps;
 
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: Attendance::class, orphanRemoval: true)]
+    private Collection $attendances;
+
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'events')]
     #[ORM\JoinTable(name: 'event_category')]
     private Collection $categories;
@@ -54,13 +60,20 @@ class Event
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $image = null;
 
+    #[Vich\UploadableField(mapping: 'event_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->rsvps = new ArrayCollection();
+        $this->attendances = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->created_at = new \DateTime();
-        $this->is_approved = false;
+        $this->is_approved = true;
     }
 
     public function getId(): ?int
@@ -225,6 +238,36 @@ class Event
     }
 
     /**
+     * @return Collection<int, Attendance>
+     */
+    public function getAttendances(): Collection
+    {
+        return $this->attendances;
+    }
+
+    public function addAttendance(Attendance $attendance): static
+    {
+        if (!$this->attendances->contains($attendance)) {
+            $this->attendances->add($attendance);
+            $attendance->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttendance(Attendance $attendance): static
+    {
+        if ($this->attendances->removeElement($attendance)) {
+            // set the owning side to null (unless already changed)
+            if ($attendance->getEvent() === $this) {
+                $attendance->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection<int, Category>
      */
     public function getCategories(): Collection
@@ -265,5 +308,47 @@ class Event
         $this->image = $image;
         
         return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile = null): self
+    {
+        $this->imageFile = $imageFile;
+        
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        
+        return $this;
+    }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function __sleep()
+    {
+        // Do not serialize the file
+        $vars = get_object_vars($this);
+        unset($vars['imageFile']);
+        
+        return array_keys($vars);
     }
 }

@@ -31,18 +31,22 @@ class NotificationService
      */
     public function sendEventCreationConfirmation(Event $event): void
     {
-        $email = (new TemplatedEmail())
-            ->from($this->senderEmail)
-            ->to($event->getOrganizer()->getEmail())
-            ->subject('Your event has been submitted - LocalEvent')
-            ->htmlTemplate('emails/event_created.html.twig')
-            ->context([
-                'event' => $event,
-                'user' => $event->getOrganizer(),
-                'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]);
+        try {
+            $email = (new TemplatedEmail())
+                ->from($this->senderEmail)
+                ->to($event->getOrganizer()->getEmail())
+                ->subject('Your event has been submitted - LocalEvent')
+                ->htmlTemplate('emails/event_created.html.twig')
+                ->context([
+                    'event' => $event,
+                    'user' => $event->getOrganizer(),
+                    'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]);
 
-        $this->mailer->send($email);
+            $this->mailer->send($email);
+        } catch (\Exception $e) {
+            // Log the error but continue execution
+        }
     }
 
     /**
@@ -50,18 +54,22 @@ class NotificationService
      */
     public function sendEventApprovalNotification(Event $event): void
     {
-        $email = (new TemplatedEmail())
-            ->from($this->senderEmail)
-            ->to($event->getOrganizer()->getEmail())
-            ->subject('Your event has been approved - LocalEvent')
-            ->htmlTemplate('emails/event_approved.html.twig')
-            ->context([
-                'event' => $event,
-                'user' => $event->getOrganizer(),
-                'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]);
+        try {
+            $email = (new TemplatedEmail())
+                ->from($this->senderEmail)
+                ->to($event->getOrganizer()->getEmail())
+                ->subject('Your event has been approved - LocalEvent')
+                ->htmlTemplate('emails/event_approved.html.twig')
+                ->context([
+                    'event' => $event,
+                    'user' => $event->getOrganizer(),
+                    'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]);
 
-        $this->mailer->send($email);
+            $this->mailer->send($email);
+        } catch (\Exception $e) {
+            // Log the error but continue execution
+        }
     }
 
     /**
@@ -69,33 +77,37 @@ class NotificationService
      */
     public function sendEventJoinNotification(Attendance $attendance): void
     {
-        // Notify the event organizer
-        $organizerEmail = (new TemplatedEmail())
-            ->from($this->senderEmail)
-            ->to($attendance->getEvent()->getOrganizer()->getEmail())
-            ->subject('Someone has joined your event - LocalEvent')
-            ->htmlTemplate('emails/event_joined_organizer.html.twig')
-            ->context([
-                'event' => $attendance->getEvent(),
-                'user' => $attendance->getUser(),
-                'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $attendance->getEvent()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]);
+        try {
+            // Notify the event organizer
+            $organizerEmail = (new TemplatedEmail())
+                ->from($this->senderEmail)
+                ->to($attendance->getEvent()->getOrganizer()->getEmail())
+                ->subject('Someone has joined your event - LocalEvent')
+                ->htmlTemplate('emails/event_joined_organizer.html.twig')
+                ->context([
+                    'event' => $attendance->getEvent(),
+                    'user' => $attendance->getUser(),
+                    'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $attendance->getEvent()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]);
 
-        $this->mailer->send($organizerEmail);
+            $this->mailer->send($organizerEmail);
 
-        // Confirmation to the attendee
-        $attendeeEmail = (new TemplatedEmail())
-            ->from($this->senderEmail)
-            ->to($attendance->getUser()->getEmail())
-            ->subject('Event registration confirmed - LocalEvent')
-            ->htmlTemplate('emails/event_joined_attendee.html.twig')
-            ->context([
-                'event' => $attendance->getEvent(),
-                'user' => $attendance->getUser(),
-                'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $attendance->getEvent()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]);
+            // Confirmation to the attendee
+            $attendeeEmail = (new TemplatedEmail())
+                ->from($this->senderEmail)
+                ->to($attendance->getUser()->getEmail())
+                ->subject('Event registration confirmed - LocalEvent')
+                ->htmlTemplate('emails/event_joined_attendee.html.twig')
+                ->context([
+                    'event' => $attendance->getEvent(),
+                    'user' => $attendance->getUser(),
+                    'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $attendance->getEvent()->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                ]);
 
-        $this->mailer->send($attendeeEmail);
+            $this->mailer->send($attendeeEmail);
+        } catch (\Exception $e) {
+            // Log the error but continue execution
+        }
     }
 
     /**
@@ -103,25 +115,29 @@ class NotificationService
      */
     public function sendEventReminder(Event $event): void
     {
-        $attendances = $event->getAttendances();
-        
-        foreach ($attendances as $attendance) {
-            if ($attendance->getStatus() === Attendance::STATUS_JOINED) {
-                $user = $attendance->getUser();
-                
-                $email = (new TemplatedEmail())
-                    ->from($this->senderEmail)
-                    ->to($user->getEmail())
-                    ->subject('Reminder: Upcoming event - LocalEvent')
-                    ->htmlTemplate('emails/event_reminder.html.twig')
-                    ->context([
-                        'event' => $event,
-                        'user' => $user,
-                        'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
-                    ]);
+        try {
+            $attendances = $event->getAttendances();
+            
+            foreach ($attendances as $attendance) {
+                if ($attendance->getStatus() === Attendance::STATUS_JOINED) {
+                    $user = $attendance->getUser();
+                    
+                    $email = (new TemplatedEmail())
+                        ->from($this->senderEmail)
+                        ->to($user->getEmail())
+                        ->subject('Reminder: Upcoming event - LocalEvent')
+                        ->htmlTemplate('emails/event_reminder.html.twig')
+                        ->context([
+                            'event' => $event,
+                            'user' => $user,
+                            'eventUrl' => $this->urlGenerator->generate('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                        ]);
 
-                $this->mailer->send($email);
+                    $this->mailer->send($email);
+                }
             }
+        } catch (\Exception $e) {
+            // Log the error but continue execution
         }
     }
 

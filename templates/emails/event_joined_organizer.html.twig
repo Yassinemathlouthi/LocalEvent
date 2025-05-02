@@ -1,0 +1,27 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block title %}Someone Has Joined Your Event{% endblock %}
+
+{% block content %}
+<div class="email-content">
+    <h2>New Attendee Alert!</h2>
+    
+    <p>Hello {{ event.organizer.name }},</p>
+    
+    <p>Good news! <strong>{{ user.name }}</strong> has just joined your event:</p>
+    
+    <div class="event-card">
+        <h3>{{ event.title }}</h3>
+        <p><strong>Date:</strong> {{ event.date|date('F d, Y - g:i a') }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+    </div>
+    
+    <p>You now have {{ event.attendances|length }} people attending this event.</p>
+    
+    <div class="cta-button">
+        <a href="{{ eventUrl }}" class="button">View Event Details</a>
+    </div>
+    
+    <p>Thank you for organizing with LocalEvent!</p>
+</div>
+{% endblock %} 

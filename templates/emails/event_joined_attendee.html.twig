@@ -1,0 +1,30 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block title %}Event Registration Confirmed{% endblock %}
+
+{% block content %}
+<div class="email-content">
+    <h2>You're In! 🎉</h2>
+    
+    <p>Hello {{ user.name }},</p>
+    
+    <p>Your registration for the following event has been confirmed:</p>
+    
+    <div class="event-card">
+        <h3>{{ event.title }}</h3>
+        <p><strong>Date:</strong> {{ event.date|date('F d, Y - g:i a') }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+        <p><strong>Organized by:</strong> {{ event.organizer.name }}</p>
+    </div>
+    
+    <p>This event has been added to your personal calendar in the LocalEvent platform.</p>
+    
+    <div class="cta-button">
+        <a href="{{ eventUrl }}" class="button">View Event Details</a>
+    </div>
+    
+    <p class="note">If you need to cancel your attendance, you can do so from the event page or your dashboard.</p>
+    
+    <p>We hope you have a great time!</p>
+</div>
+{% endblock %} 

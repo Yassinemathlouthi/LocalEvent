@@ -39,10 +39,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        {{ form_label(form.category) }}
-                                        {{ form_widget(form.category) }}
+                                        {{ form_label(form.time) }}
+                                        {{ form_widget(form.time) }}
                                         <div class="invalid-feedback">
-                                            {{ form_errors(form.category) }}
+                                            {{ form_errors(form.time) }}
                                         </div>
                                     </div>
                                 </div>
@@ -52,6 +52,15 @@
                                     {{ form_widget(form.location) }}
                                     <div class="invalid-feedback">
                                         {{ form_errors(form.location) }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form_label(form.categories) }}
+                                    {{ form_widget(form.categories) }}
+                                    <div class="form-text">You can select multiple categories by holding Ctrl (or Cmd on Mac).</div>
+                                    <div class="invalid-feedback">
+                                        {{ form_errors(form.categories) }}
                                     </div>
                                 </div>
 
@@ -71,11 +80,9 @@
                                 </div>
 
                                 {% if is_granted('ROLE_ADMIN') %}
-                                    <div class="mb-4 form-check">
-                                        <label for="isApproved" class="form-check-label">
-                                            <input type="checkbox" id="isApproved" name="event[isApproved]" class="form-check-input" {% if event.isApproved %}checked{% endif %}>
-                                            Approve this event
-                                        </label>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" name="event[is_approved]" id="event_is_approved" class="form-check-input" {% if event.getIsApproved %}checked{% endif %}>
+                                        <label class="form-check-label" for="event_is_approved">Approved</label>
                                     </div>
                                 {% endif %}
 

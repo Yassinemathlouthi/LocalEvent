@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -62,11 +62,14 @@ class EventType extends AbstractType
                 'expanded' => false,
                 'attr' => ['class' => 'form-select']
             ])
-            ->add('image', UrlType::class, [
-                'label' => 'Event Image URL',
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Event Image',
                 'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Delete image',
+                'download_uri' => false,
+                'asset_helper' => true,
                 'attr' => [
-                    'placeholder' => 'Enter the URL of an image (optional)',
                     'class' => 'form-control'
                 ]
             ])

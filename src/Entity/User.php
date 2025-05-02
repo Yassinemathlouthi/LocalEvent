@@ -38,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $location = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $interests = null;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $profile_picture = null;
 
@@ -50,6 +53,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Rsvp::class)]
     private Collection $rsvps;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Attendance::class)]
+    private Collection $attendances;
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class)]
     private Collection $comments;
 
@@ -57,6 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->organizedEvents = new ArrayCollection();
         $this->rsvps = new ArrayCollection();
+        $this->attendances = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->created_at = new \DateTime();
         $this->roles = ['ROLE_USER'];
@@ -167,6 +174,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getInterests(): ?array
+    {
+        return $this->interests;
+    }
+
+    public function setInterests(?array $interests): static
+    {
+        $this->interests = $interests;
+
+        return $this;
+    }
+
     public function getProfilePicture(): ?string
     {
         return $this->profile_picture;
@@ -245,6 +264,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($rsvp->getUser() === $this) {
                 $rsvp->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Attendance>
+     */
+    public function getAttendances(): Collection
+    {
+        return $this->attendances;
+    }
+
+    public function addAttendance(Attendance $attendance): static
+    {
+        if (!$this->attendances->contains($attendance)) {
+            $this->attendances->add($attendance);
+            $attendance->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttendance(Attendance $attendance): static
+    {
+        if ($this->attendances->removeElement($attendance)) {
+            // set the owning side to null (unless already changed)
+            if ($attendance->getUser() === $this) {
+                $attendance->setUser(null);
             }
         }
 

@@ -1,0 +1,27 @@
+<!-- Dashboard Sidebar -->
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Dashboard</h5>
+    </div>
+    <div class="list-group list-group-flush">
+        <a href="{{ path('app_dashboard') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2 
+            {{ active is defined and active == 'dashboard' ? 'active' : '' }}">
+            <i class="bi bi-speedometer2"></i> Dashboard Overview
+        </a>
+        <a href="{{ path('app_my_events') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2
+            {{ active is defined and active == 'my_events' ? 'active' : '' }}">
+            <i class="bi bi-calendar-event"></i> My Events
+        </a>
+        <a href="{{ path('app_attending') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2
+            {{ active is defined and active == 'attending' ? 'active' : '' }}">
+            <i class="bi bi-person-check"></i> Events I'm Attending
+        </a>
+        <a href="{{ path('app_profile') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2
+            {{ active is defined and active == 'profile' ? 'active' : '' }}">
+            <i class="bi bi-person-circle"></i> My Profile
+        </a>
+        <a href="{{ path('event_new') }}" class="list-group-item list-group-item-action d-flex align-items-center gap-2 text-success">
+            <i class="bi bi-plus-circle"></i> Create New Event
+        </a>
+    </div>
+</div> 
