@@ -4,7 +4,7 @@
 
 {% block body %}
 <!-- Dashboard Section -->
-<section class="py-5">
+<section class="py-4">
     <div class="container">
         <div class="row">
             <!-- Sidebar -->
@@ -15,104 +15,102 @@
             <!-- Main Content -->
             <div class="col-lg-9">
                 <!-- Welcome Card -->
-                <div class="card shadow-sm mb-4 border-left-primary">
-                    <div class="card-body py-4">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="avatar-circle bg-primary text-white">
-                                    <i class="bi bi-person-circle fs-1"></i>
-                                </div>
+                <div class="dashboard-card gradient-bg mb-4">
+                    <div class="dashboard-card-body py-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-wrapper pulse">
+                                {% if app.user.profilePicture is defined and app.user.profilePicture %}
+                                    <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}" alt="{{ app.user.name }}">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        {{ app.user.name|slice(0, 1)|upper }}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col">
-                                <h4 class="mb-1">Welcome back, {{ app.user.name }}!</h4>
-                                <p class="text-muted mb-0">Here's what's happening with your events</p>
+                            <div>
+                                <h2 class="mb-1 text-white">Welcome back, <span class="fw-bold">{{ app.user.name }}</span>!</h2>
+                                <p class="text-white opacity-75 mb-0">Here's what's happening with your events</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Stats Cards -->
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-4 mb-md-0">
-                        <div class="card border-left-primary shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            My Events</div>
-                                        <div class="h5 mb-0 font-weight-bold">{{ myEvents|length }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-calendar-event fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
+                <div class="stats-grid mb-4">
+                    <div class="stat-card float">
+                        <div class="stat-header">
+                            <h3 class="stat-title">My Events</h3>
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar-event"></i>
                             </div>
                         </div>
+                        <div class="stat-value">{{ myEvents|length }}</div>
+                        <a href="{{ path('app_my_events') }}" class="btn btn-sm btn-ghost mt-3">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
                     
-                    <div class="col-md-4 mb-4 mb-md-0">
-                        <div class="card border-left-success shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Attending</div>
-                                        <div class="h5 mb-0 font-weight-bold">{{ attendances|length }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-person-check fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
+                    <div class="stat-card success float" style="animation-delay: 0.2s">
+                        <div class="stat-header">
+                            <h3 class="stat-title">Attending</h3>
+                            <div class="stat-icon">
+                                <i class="bi bi-person-check"></i>
                             </div>
                         </div>
+                        <div class="stat-value">{{ attendances|length }}</div>
+                        <a href="{{ path('app_attending') }}" class="btn btn-sm btn-ghost mt-3">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
                     
-                    <div class="col-md-4">
-                        <div class="card border-left-info shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            Next Event</div>
-                                        <div class="h5 mb-0 font-weight-bold">
-                                            {% set nextEvent = null %}
-                                            {% set today = "now"|date("Y-m-d") %}
-                                            
-                                            {% for event in myEvents %}
-                                                {% if event.date|date("Y-m-d") >= today %}
-                                                    {% if nextEvent is null or event.date < nextEvent.date %}
-                                                        {% set nextEvent = event %}
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            
-                                            {% if nextEvent %}
-                                                {{ nextEvent.date|date("M d") }}
-                                            {% else %}
-                                                -
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-calendar-date fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
+                    <div class="stat-card info float" style="animation-delay: 0.4s">
+                        <div class="stat-header">
+                            <h3 class="stat-title">Next Event</h3>
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar-date"></i>
                             </div>
                         </div>
+                        <div class="stat-value">
+                            {% set nextEvent = null %}
+                            {% set today = "now"|date("Y-m-d") %}
+                            
+                            {% for event in myEvents %}
+                                {% if event.date|date("Y-m-d") >= today %}
+                                    {% if nextEvent is null or event.date < nextEvent.date %}
+                                        {% set nextEvent = event %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if nextEvent %}
+                                {{ nextEvent.date|date("M d") }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
+                        {% if nextEvent %}
+                            <a href="{{ path('event_show', {'id': nextEvent.id}) }}" class="btn btn-sm btn-ghost mt-3">
+                                View Event <i class="bi bi-arrow-right"></i>
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
                 
                 <!-- My Events Preview -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">My Events</h5>
-                        <a href="{{ path('app_my_events') }}" class="btn btn-sm btn-primary">View All</a>
+                <div class="dashboard-card shine mb-4">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">
+                            <i class="bi bi-calendar-event"></i> My Events
+                        </h3>
+                        <a href="{{ path('app_my_events') }}" class="btn btn-sm btn-primary btn-animate">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
-                    <div class="card-body">
+                    <div class="dashboard-card-body">
                         {% if myEvents|length > 0 %}
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
+                                <table class="table">
+                                    <thead>
                                         <tr>
                                             <th>Title</th>
                                             <th>Date</th>
@@ -124,14 +122,16 @@
                                         {% for event in myEvents|slice(0, 3) %}
                                             <tr>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
+                                                    <div class="d-flex align-items-center gap-3">
                                                         {% if event.image %}
-                                                            <div class="event-thumbnail me-3">
-                                                                <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}" class="rounded" width="40">
+                                                            <div class="avatar-wrapper">
+                                                                <img src="{{ vich_uploader_asset(event, 'imageFile') }}" alt="{{ event.title }}">
                                                             </div>
                                                         {% else %}
-                                                            <div class="event-icon me-3 bg-light rounded p-2">
-                                                                <i class="bi bi-calendar-event text-primary"></i>
+                                                            <div class="avatar-wrapper">
+                                                                <div class="avatar-placeholder">
+                                                                    <i class="bi bi-calendar-event"></i>
+                                                                </div>
                                                             </div>
                                                         {% endif %}
                                                         <span>{{ event.title }}</span>
@@ -142,15 +142,15 @@
                                                     {% if event.getIsApproved %}
                                                         <span class="badge bg-success">Approved</span>
                                                     {% else %}
-                                                        <span class="badge bg-warning text-dark">Pending</span>
+                                                        <span class="badge bg-warning">Pending</span>
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    <div class="btn-group">
-                                                        <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-outline-primary" title="View">
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-icon" title="View">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <a href="{{ path('event_edit', {'id': event.id}) }}" class="btn btn-sm btn-outline-secondary" title="Edit">
+                                                        <a href="{{ path('event_edit', {'id': event.id}) }}" class="btn btn-sm btn-icon" title="Edit">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
                                                     </div>
@@ -161,12 +161,12 @@
                                 </table>
                             </div>
                         {% else %}
-                            <div class="text-center py-4">
-                                <div class="mb-3">
-                                    <i class="bi bi-calendar-plus text-muted" style="font-size: 3rem;"></i>
-                                </div>
-                                <p class="text-muted mb-3">You haven't created any events yet.</p>
-                                <a href="{{ path('event_new') }}" class="btn btn-primary">
+                            <div class="empty-state">
+                                <span class="empty-state-icon pulse">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </span>
+                                <p class="empty-state-text">You haven't created any events yet.</p>
+                                <a href="{{ path('event_new') }}" class="btn btn-primary btn-animate">
                                     <i class="bi bi-plus-circle me-1"></i> Create Your First Event
                                 </a>
                             </div>
@@ -175,16 +175,20 @@
                 </div>
                 
                 <!-- Events I'm Attending Preview -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Events I'm Attending</h5>
-                        <a href="{{ path('app_attending') }}" class="btn btn-sm btn-primary">View All</a>
+                <div class="dashboard-card shine">
+                    <div class="dashboard-card-header">
+                        <h3 class="dashboard-card-title">
+                            <i class="bi bi-people"></i> Events I'm Attending
+                        </h3>
+                        <a href="{{ path('app_attending') }}" class="btn btn-sm btn-primary btn-animate">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
-                    <div class="card-body">
+                    <div class="dashboard-card-body">
                         {% if attendances|length > 0 %}
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
+                                <table class="table">
+                                    <thead>
                                         <tr>
                                             <th>Event</th>
                                             <th>Date</th>
@@ -196,14 +200,16 @@
                                         {% for attendance in attendances|slice(0, 3) %}
                                             <tr>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
+                                                    <div class="d-flex align-items-center gap-3">
                                                         {% if attendance.event.image %}
-                                                            <div class="event-thumbnail me-3">
-                                                                <img src="{{ asset('uploads/events/' ~ attendance.event.image) }}" alt="{{ attendance.event.title }}" class="rounded" width="40">
+                                                            <div class="avatar-wrapper">
+                                                                <img src="{{ vich_uploader_asset(attendance.event, 'imageFile') }}" alt="{{ attendance.event.title }}">
                                                             </div>
                                                         {% else %}
-                                                            <div class="event-icon me-3 bg-light rounded p-2">
-                                                                <i class="bi bi-calendar-event text-primary"></i>
+                                                            <div class="avatar-wrapper">
+                                                                <div class="avatar-placeholder">
+                                                                    <i class="bi bi-calendar-event"></i>
+                                                                </div>
                                                             </div>
                                                         {% endif %}
                                                         <span>{{ attendance.event.title }}</span>
@@ -212,11 +218,11 @@
                                                 <td>{{ attendance.event.date|date('M d, Y') }}</td>
                                                 <td>{{ attendance.event.organizer.name }}</td>
                                                 <td>
-                                                    <div class="btn-group">
-                                                        <a href="{{ path('event_show', {'id': attendance.event.id}) }}" class="btn btn-sm btn-outline-primary" title="View">
+                                                    <div class="d-flex gap-2">
+                                                        <a href="{{ path('event_show', {'id': attendance.event.id}) }}" class="btn btn-sm btn-icon" title="View">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Leave" 
+                                                        <button type="button" class="btn btn-sm btn-icon btn-danger" title="Leave" 
                                                                 onclick="if(confirm('Are you sure you want to leave this event?')) { document.getElementById('leave-form-{{ attendance.event.id }}').submit(); }">
                                                             <i class="bi bi-x-circle"></i>
                                                         </button>
@@ -231,12 +237,12 @@
                                 </table>
                             </div>
                         {% else %}
-                            <div class="text-center py-4">
-                                <div class="mb-3">
-                                    <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
-                                </div>
-                                <p class="text-muted mb-3">You're not attending any events yet.</p>
-                                <a href="{{ path('event_index') }}" class="btn btn-primary">
+                            <div class="empty-state">
+                                <span class="empty-state-icon pulse">
+                                    <i class="bi bi-people"></i>
+                                </span>
+                                <p class="empty-state-text">You're not attending any events yet.</p>
+                                <a href="{{ path('event_index') }}" class="btn btn-primary btn-animate">
                                     <i class="bi bi-search me-1"></i> Browse Events
                                 </a>
                             </div>

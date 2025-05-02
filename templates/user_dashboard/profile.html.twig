@@ -15,95 +15,99 @@
             <!-- Main Content -->
             <div class="col-lg-9">
                 <!-- Page Header Card -->
-                <div class="card shadow-sm mb-4 border-left-info">
-                    <div class="card-body py-4">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="avatar-circle bg-info text-white">
-                                    <i class="bi bi-person-badge fs-1"></i>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <h4 class="mb-1 text-info">My Profile</h4>
-                                <p class="text-muted mb-0">Manage your personal information</p>
-                            </div>
-                        </div>
+                <div class="dashboard-card animate-on-scroll">
+                    <div class="dashboard-card-header">
+                        <h4 class="dashboard-card-title">
+                            <i class="bi bi-person-badge"></i> My Profile
+                        </h4>
+                    </div>
+                    <div class="dashboard-card-body">
+                        <p class="text-muted">Manage your personal information and customize your profile</p>
                     </div>
                 </div>
                 
                 <!-- Profile Summary -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3 text-center mb-4 mb-md-0">
-                                <div class="profile-image-container mb-3">
-                                    {% if app.user.profilePicture %}
-                                        <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}" alt="{{ app.user.name }}" class="img-fluid rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
-                                    {% else %}
-                                        <div class="avatar-circle mx-auto bg-primary text-white" style="width: 150px; height: 150px;">
-                                            <span class="display-4">{{ app.user.name|slice(0, 1)|upper }}</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadProfilePicture">
-                                    <i class="bi bi-camera me-1"></i> Change Photo
-                                </button>
-                            </div>
-                            <div class="col-md-9">
-                                <h4>{{ app.user.name }}</h4>
-                                <p class="text-muted">
-                                    <i class="bi bi-envelope me-2"></i>{{ app.user.email }}
-                                </p>
-                                {% if app.user.location %}
-                                    <p class="text-muted">
-                                        <i class="bi bi-geo-alt me-2"></i>{{ app.user.location }}
-                                    </p>
-                                {% endif %}
-                                
-                                {% if app.user.interests and app.user.interests|length > 0 %}
-                                    <div class="mt-3">
-                                        <h6>Interests</h6>
-                                        <div>
-                                            {% for interest in app.user.interests %}
-                                                <span class="badge bg-light text-dark me-2 mb-2">{{ interest }}</span>
-                                            {% endfor %}
-                                        </div>
+                <div class="glass-card animate-on-scroll delay-1 mb-4">
+                    <div class="user-profile">
+                        <div class="position-relative">
+                            <div class="profile-image-container">
+                                {% if app.user.profilePicture %}
+                                    <div class="user-avatar hover-lift" id="profileImagePreview">
+                                        <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}?v={{ 'now'|date('U') }}" alt="{{ app.user.name }}" class="shadow-lg">
+                                    </div>
+                                {% else %}
+                                    <div class="user-avatar-placeholder hover-lift" id="profileImagePreview">
+                                        {{ app.user.name|slice(0, 1)|upper }}
                                     </div>
                                 {% endif %}
+                                
+                                <div class="camera-upload-trigger" id="cameraUploadTrigger">
+                                    <i class="bi bi-camera-fill"></i>
+                                </div>
+                                
+                                <!-- Hidden file input triggered by camera icon -->
+                                <form id="profilePictureForm" action="{{ path('app_upload_profile_picture') }}" method="post" enctype="multipart/form-data" class="d-none">
+                                    <input type="file" name="profilePicture" id="profilePictureInput" accept="image/*">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('upload-profile-picture') }}">
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="user-info">
+                            <h4 class="text-gradient mb-1">{{ app.user.name }}</h4>
+                            <p class="text-muted mb-3">{{ app.user.email }}</p>
+                            
+                            <div class="user-stats d-flex flex-wrap gap-4">
+                                <div class="stat-item">
+                                    <div class="stat-value pulse-slow">{{ events_created }}</div>
+                                    <div class="stat-label">Events Created</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value pulse-slow">{{ events_attending }}</div>
+                                    <div class="stat-label">Events Attending</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Profile Card -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">Edit Profile</h5>
+                <div class="dashboard-card animate-on-scroll delay-2 mb-4">
+                    <div class="dashboard-card-header">
+                        <h5 class="dashboard-card-title">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="dashboard-card-body">
                         {% for message in app.flashes('success') %}
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                {{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="flash-message flash-success flash-message-visible">
+                                <div class="flash-icon">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="flash-content">
+                                    <div class="flash-message-text">{{ message }}</div>
+                                </div>
+                                <button class="flash-close">
+                                    <i class="bi bi-x"></i>
+                                </button>
                             </div>
                         {% endfor %}
                         
-                        {{ form_start(profileForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                        {{ form_start(profileForm, {'attr': {'class': 'needs-validation modern-form', 'novalidate': 'novalidate'}}) }}
                             <div class="row mb-4">
                                 <div class="col-md-6 mb-3 mb-md-0">
-                                    <div class="form-floating">
-                                        {{ form_widget(profileForm.name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Name'}}) }}
-                                        {{ form_label(profileForm.name) }}
+                                    <div class="form-group">
+                                        <label for="{{ profileForm.name.vars.id }}">Full Name</label>
+                                        {{ form_widget(profileForm.name, {'attr': {'class': 'form-control'}}) }}
                                         <div class="invalid-feedback">
                                             {{ form_errors(profileForm.name) }}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        {{ form_widget(profileForm.email, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Email'}}) }}
-                                        {{ form_label(profileForm.email) }}
+                                    <div class="form-group">
+                                        <label for="{{ profileForm.email.vars.id }}">Email Address</label>
+                                        {{ form_widget(profileForm.email, {'attr': {'class': 'form-control'}}) }}
                                         <div class="invalid-feedback">
                                             {{ form_errors(profileForm.email) }}
                                         </div>
@@ -112,9 +116,9 @@
                             </div>
 
                             <div class="mb-4">
-                                <div class="form-floating">
-                                    {{ form_widget(profileForm.location, {'attr': {'class': 'form-control', 'placeholder': 'Location'}}) }}
-                                    {{ form_label(profileForm.location) }}
+                                <div class="form-group">
+                                    <label for="{{ profileForm.location.vars.id }}">Location</label>
+                                    {{ form_widget(profileForm.location, {'attr': {'class': 'form-control'}}) }}
                                     <div class="form-text">
                                         <i class="bi bi-geo-alt text-muted me-1"></i>
                                         Enter your city or area to help us suggest nearby events.
@@ -126,37 +130,33 @@
                             </div>
 
                             <div class="mb-4">
-                                <div class="card bg-light border">
-                                    <div class="card-header">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            {{ form_label(profileForm.interests) }}
-                                            <button type="button" class="btn btn-sm btn-outline-primary add-interest">
-                                                <i class="bi bi-plus-circle me-1"></i> Add
-                                            </button>
-                                        </div>
+                                <div class="glass-card">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0">{{ form_label(profileForm.interests) }}</h6>
+                                        <button type="button" class="btn btn-primary btn-sm add-interest ripple">
+                                            <i class="bi bi-plus-circle me-1"></i> Add
+                                        </button>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="interests-container" 
-                                             data-prototype="{{ form_widget(profileForm.interests.vars.prototype)|e }}"
-                                             data-widget-counter="{{ profileForm.interests|length }}">
-                                            {% for interestField in profileForm.interests %}
-                                                <div class="interest-item input-group mb-2">
-                                                    {{ form_widget(interestField, {'attr': {'class': 'form-control'}}) }}
-                                                    <button type="button" class="btn btn-outline-danger remove-interest">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                        {% if profileForm.interests|length == 0 %}
-                                            <p class="text-muted mb-0">Add your interests to help us recommend relevant events.</p>
-                                        {% endif %}
+                                    <div class="interests-container" 
+                                         data-prototype="{{ form_widget(profileForm.interests.vars.prototype)|e }}"
+                                         data-widget-counter="{{ profileForm.interests|length }}">
+                                        {% for interestField in profileForm.interests %}
+                                            <div class="interest-item input-group mb-2 animate-on-scroll delay-{{ loop.index }}">
+                                                {{ form_widget(interestField, {'attr': {'class': 'form-control'}}) }}
+                                                <button type="button" class="btn btn-danger remove-interest">
+                                                    <i class="bi bi-x-lg"></i>
+                                                </button>
+                                            </div>
+                                        {% endfor %}
                                     </div>
+                                    {% if profileForm.interests|length == 0 %}
+                                        <p class="text-muted mb-0">Add your interests to help us recommend relevant events.</p>
+                                    {% endif %}
                                 </div>
                             </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg ripple">
                                     <i class="bi bi-check-circle me-2"></i> Save Changes
                                 </button>
                             </div>
@@ -165,21 +165,21 @@
                 </div>
                 
                 <!-- Security Card -->
-                <div class="card shadow-sm mt-4">
-                    <div class="card-header bg-light">
-                        <h5 class="card-title mb-0">Security</h5>
+                <div class="dashboard-card animate-on-scroll delay-3">
+                    <div class="dashboard-card-header">
+                        <h5 class="dashboard-card-title">
+                            <i class="bi bi-shield-lock"></i> Security
+                        </h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h6 class="card-subtitle mb-2">Change Password</h6>
-                                <p class="card-text text-muted">Update your password to maintain account security.</p>
+                    <div class="dashboard-card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-2">Change Password</h6>
+                                <p class="text-muted mb-0">Update your password to maintain account security.</p>
                             </div>
-                            <div class="col-auto">
-                                <a href="{{ path('app_change_password') }}" class="btn btn-outline-dark">
-                                    <i class="bi bi-key me-1"></i> Change Password
-                                </a>
-                            </div>
+                            <a href="{{ path('app_change_password') }}" class="btn btn-outline hover-lift">
+                                <i class="bi bi-key me-1"></i> Change Password
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -189,26 +189,55 @@
     
     <!-- Profile Picture Upload Modal -->
     <div class="modal fade" id="uploadProfilePicture" tabindex="-1" aria-labelledby="uploadProfilePictureLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="uploadProfilePictureLabel">Upload Profile Picture</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-gradient" id="uploadProfilePictureLabel">
+                        <i class="bi bi-camera me-2"></i> Upload Profile Picture
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ path('app_upload_profile_picture') }}" method="post" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="profilePicture" class="form-label">Select Image</label>
-                            <input type="file" class="form-control" id="profilePicture" name="profilePicture" accept="image/*" required>
-                            <div class="form-text">Maximum file size: 2MB. Supported formats: JPG, PNG.</div>
+                    <form action="{{ path('app_upload_profile_picture') }}" method="post" enctype="multipart/form-data" class="modern-form">
+                        <div class="text-center mb-5">
+                            <div class="position-relative mx-auto" style="width: 150px; height: 150px;">
+                                <div class="profile-preview-container rounded-circle overflow-hidden border border-2 border-primary" style="width: 150px; height: 150px; background-color: var(--neutral-100);">
+                                    {% if app.user.profilePicture %}
+                                        <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}" class="w-100 h-100 object-fit-cover" id="currentProfileImage" alt="{{ app.user.name }}">
+                                    {% else %}
+                                        <div class="d-flex align-items-center justify-content-center w-100 h-100 bg-primary text-white">
+                                            <span style="font-size: 3rem;">{{ app.user.name|slice(0, 1)|upper }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="position-absolute bottom-0 end-0">
+                                    <div class="btn btn-primary btn-sm rounded-circle" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-camera"></i>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        
+                        <div class="file-upload-container">
+                            <label for="profilePicture" class="btn btn-outline w-100 p-4 text-center border-dashed position-relative">
+                                <i class="bi bi-cloud-arrow-up fs-1 d-block mb-2"></i>
+                                <span class="d-block mb-1">Drop your image here or click to browse</span>
+                                <small class="text-muted">Maximum 2MB. JPG or PNG only.</small>
+                                <input type="file" class="form-control d-none" id="profilePicture" name="profilePicture" accept="image/*" required>
+                            </label>
+                        </div>
+                        
                         <div class="text-center my-3 d-none" id="imagePreviewContainer">
-                            <img id="imagePreview" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Preview">
+                            <img id="imagePreview" class="img-fluid rounded-circle shadow-md" style="width: 150px; height: 150px; object-fit: cover;" alt="Preview">
                         </div>
+                        
                         <input type="hidden" name="token" value="{{ csrf_token('upload-profile-picture') }}">
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-cloud-upload me-2"></i> Upload
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg ripple">
+                                <i class="bi bi-cloud-upload me-2"></i> Upload New Picture
+                            </button>
+                            <button type="button" class="btn btn-outline" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i> Cancel
                             </button>
                         </div>
                     </form>
@@ -223,74 +252,121 @@
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Profile picture upload handling
+            const cameraUploadTrigger = document.getElementById('cameraUploadTrigger');
+            const profilePictureInput = document.getElementById('profilePictureInput');
+            const profilePictureForm = document.getElementById('profilePictureForm');
+            const profileImagePreview = document.getElementById('profileImagePreview');
+            
+            // Trigger file input when camera icon is clicked
+            if (cameraUploadTrigger && profilePictureInput) {
+                cameraUploadTrigger.addEventListener('click', function() {
+                    profilePictureInput.click();
+                });
+                
+                // Auto-submit form when file is selected
+                profilePictureInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        // Show loading state
+                        const loadingOverlay = document.createElement('div');
+                        loadingOverlay.className = 'profile-image-loading';
+                        loadingOverlay.innerHTML = '<div class="spinner-border text-light spinner-border-sm" role="status"></div>';
+                        profileImagePreview.appendChild(loadingOverlay);
+                        
+                        // Preview image before upload
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            // If it's a placeholder, replace with actual image container
+                            if (profileImagePreview.classList.contains('user-avatar-placeholder')) {
+                                profileImagePreview.classList.remove('user-avatar-placeholder');
+                                profileImagePreview.classList.add('user-avatar');
+                                profileImagePreview.innerHTML = '<img src="' + event.target.result + '" alt="Preview" class="shadow-lg">';
+                            } else {
+                                // Just update the existing image
+                                const img = profileImagePreview.querySelector('img');
+                                if (img) {
+                                    img.src = event.target.result;
+                                }
+                            }
+                        };
+                        reader.readAsDataURL(this.files[0]);
+                        
+                        // Submit form
+                        setTimeout(() => {
+                            profilePictureForm.submit();
+                        }, 500);
+                    }
+                });
+            }
+            
             // Handle dynamic form collection for interests
             const interestsContainer = document.querySelector('.interests-container');
             if (interestsContainer) {
-                // Add new interest
+                // Add new interest with animation
                 document.querySelector('.add-interest').addEventListener('click', function() {
                     const prototype = interestsContainer.dataset.prototype;
                     const counter = interestsContainer.dataset.widgetCounter;
                     
                     // Create new interest item
                     const newItem = document.createElement('div');
-                    newItem.className = 'interest-item input-group mb-2';
-                    newItem.innerHTML = prototype.replace(/__name__/g, counter) + 
-                                       '<button type="button" class="btn btn-outline-danger remove-interest">' +
-                                       '<i class="bi bi-x-lg"></i></button>';
+                    newItem.className = 'interest-item animate__animated animate__fadeIn';
+                    newItem.innerHTML = prototype.replace(/__name__/g, counter);
                     
-                    interestsContainer.appendChild(newItem);
-                    interestsContainer.dataset.widgetCounter = parseInt(counter) + 1;
-                    
-                    // Add remove event listener to the newly created button
-                    newItem.querySelector('.remove-interest').addEventListener('click', function() {
-                        newItem.remove();
+                    // Add delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.type = 'button';
+                    deleteBtn.className = 'btn btn-outline-danger btn-sm interest-remove';
+                    deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+                    deleteBtn.addEventListener('click', function() {
+                        newItem.classList.remove('animate__fadeIn');
+                        newItem.classList.add('animate__fadeOut');
+                        setTimeout(() => {
+                            newItem.remove();
+                        }, 500);
                     });
                     
-                    // Add class to the form control
-                    newItem.querySelector('input').classList.add('form-control');
+                    newItem.querySelector('.interest-input-group').appendChild(deleteBtn);
+                    interestsContainer.appendChild(newItem);
                     
-                    // Remove empty message if exists
-                    const emptyMessage = interestsContainer.closest('.card-body').querySelector('p.text-muted');
-                    if (emptyMessage) {
-                        emptyMessage.remove();
-                    }
+                    // Update counter
+                    interestsContainer.dataset.widgetCounter = parseInt(counter) + 1;
                 });
                 
-                // Remove interest (for existing buttons)
-                document.querySelectorAll('.remove-interest').forEach(function(button) {
+                // Remove interest with animation
+                document.querySelectorAll('.interest-remove').forEach(button => {
                     button.addEventListener('click', function() {
-                        button.closest('.interest-item').remove();
-                        
-                        // If no interests left, add the empty message back
-                        if (interestsContainer.children.length === 0) {
-                            const emptyMessage = document.createElement('p');
-                            emptyMessage.className = 'text-muted mb-0';
-                            emptyMessage.textContent = 'Add your interests to help us recommend relevant events.';
-                            interestsContainer.closest('.card-body').appendChild(emptyMessage);
-                        }
+                        const item = this.closest('.interest-item');
+                        item.classList.remove('animate__fadeIn');
+                        item.classList.add('animate__fadeOut');
+                        setTimeout(() => {
+                            item.remove();
+                        }, 500);
                     });
                 });
             }
             
-            // Profile picture preview
-            const profilePictureInput = document.getElementById('profilePicture');
-            const imagePreview = document.getElementById('imagePreview');
-            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-            
-            if (profilePictureInput) {
-                profilePictureInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            imagePreview.src = e.target.result;
-                            imagePreviewContainer.classList.remove('d-none');
-                        }
-                        
-                        reader.readAsDataURL(this.files[0]);
-                    }
+            // Add ripple effect to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple-effect';
+                    
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
                 });
-            }
+            });
         });
     </script>
 {% endblock %}

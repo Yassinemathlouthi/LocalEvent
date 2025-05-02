@@ -78,11 +78,26 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
+        // Add a success flash message
+        $request->getSession()->getFlashBag()->add('success', 'Welcome back! You have successfully logged in.');
+        
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+    }
+    
+    /**
+     * Override to customize what happens when the login fails
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
+    {
+        if ($request->hasSession()) {
+            $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate(self::LOGIN_ROUTE));
     }
 } 

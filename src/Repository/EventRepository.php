@@ -202,12 +202,13 @@ class EventRepository extends ServiceEntityRepository
      */
     public function findApprovedEvents(): array
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.is_approved = :approved')
+        $qb = $this->createQueryBuilder('e')
+            ->andWhere('e.is_approved = :approved OR e.is_approved IS NULL')
             ->setParameter('approved', true)
-            ->orderBy('e.date', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('e.date', 'ASC');
+        
+        // Execute and return results
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -248,6 +249,21 @@ class EventRepository extends ServiceEntityRepository
             ->andWhere('e.date < :date')
             ->setParameter('date', $date)
             ->orderBy('e.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find all pending (not approved) events
+     *
+     * @return Event[] Returns an array of pending Event objects
+     */
+    public function findPendingEvents(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.is_approved = :approved')
+            ->setParameter('approved', false)
+            ->orderBy('e.created_at', 'DESC')
             ->getQuery()
             ->getResult();
     }

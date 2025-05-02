@@ -47,9 +47,7 @@ class SecurityController extends AbstractController
         Request $request, 
         UserPasswordHasherInterface $userPasswordHasher, 
         EntityManagerInterface $entityManager,
-        NotificationService $notificationService,
-        UserAuthenticatorInterface $userAuthenticator,
-        LoginFormAuthenticator $authenticator
+        NotificationService $notificationService
     ): Response
     {
         // If already logged in, redirect to homepage
@@ -90,14 +88,11 @@ class SecurityController extends AbstractController
                     // Send welcome email
                     $notificationService->sendWelcomeEmail($user);
 
-                    // Auto login after registration
-                    $this->addFlash('success', 'Account created successfully! You are now logged in.');
+                    // Redirect to login page instead of auto-login
+                    $this->addFlash('success', 'Account created successfully! Please log in with your new credentials.');
                     
-                    return $userAuthenticator->authenticateUser(
-                        $user,
-                        $authenticator,
-                        $request
-                    );
+                    return $this->redirectToRoute('app_login');
+                    
                 } catch (\Exception $e) {
                     $this->addFlash('danger', 'An error occurred during registration. Please try again.');
                     

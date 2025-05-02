@@ -7,66 +7,55 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         
         {% block stylesheets %}
-            <!-- Bootstrap CSS -->
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            {{ encore_entry_link_tags('app') }}
+            
             <!-- Bootstrap Icons -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-            <!-- Custom styles -->
-            <style>
-                .event-card {
-                    height: 100%;
-                    transition: transform 0.3s;
-                }
-                .event-card:hover {
-                    transform: translateY(-5px);
-                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-                }
-                .hero-section {
-                    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), linear-gradient(to right, #1e3c72, #2a5298);
-                    background-size: cover;
-                    background-position: center;
-                    padding: 6rem 0;
-                    color: white;
-                }
-                .footer {
-                    background-color: #333;
-                    color: white;
-                    padding: 3rem 0;
-                }
-                .navbar {
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                }
-                .nav-link {
-                    font-weight: 500;
-                }
-                .badge-category {
-                    background-color: #6c757d;
-                }
-            </style>
-            {{ encore_entry_link_tags('app') }}
+            
+            <!-- Modern Design System - loaded last to override Bootstrap styles -->
+            <link rel="stylesheet" href="{{ asset('assets/css/design-system/variables.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/design-system/components.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/design-system/layout.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/design-system/main.css') }}">
         {% endblock %}
 
         {% block javascripts %}
-            <!-- Bootstrap JS Bundle with Popper -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
             {{ encore_entry_script_tags('app') }}
+            <!-- Design System JS -->
+            <script src="{{ asset('assets/js/design-system.js') }}"></script>
         {% endblock %}
     </head>
-    <body class="d-flex flex-column min-vh-100">
+    <body>
         {% include 'partials/navbar.html.twig' %}
         
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }} alert-dismissible fade show mb-0" role="alert">
-                    <div class="container py-2">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Flash messages container -->
+        <div class="flash-messages">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash-message flash-{{ label }}">
+                        <div class="flash-icon">
+                            {% if label == 'success' %}
+                                <i class="bi bi-check-circle"></i>
+                            {% elseif label == 'error' or label == 'danger' %}
+                                <i class="bi bi-exclamation-circle"></i>
+                            {% elseif label == 'warning' %}
+                                <i class="bi bi-exclamation-triangle"></i>
+                            {% else %}
+                                <i class="bi bi-info-circle"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flash-content">
+                            <div class="flash-message-text">{{ message }}</div>
+                        </div>
+                        <button class="flash-close">
+                            <i class="bi bi-x"></i>
+                        </button>
                     </div>
-                </div>
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
+        </div>
 
-        <main class="flex-shrink-0">
+        <main>
             {% block body %}{% endblock %}
         </main>
 

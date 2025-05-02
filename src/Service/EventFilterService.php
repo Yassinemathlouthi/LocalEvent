@@ -28,6 +28,17 @@ class EventFilterService
     {
         $filters = $this->extractFiltersFromRequest($request);
         
+        // If no filters are applied, show only upcoming approved events
+        if (empty($filters)) {
+            $filters['upcoming'] = true;
+            $filters['approved'] = true;
+        }
+        
+        // Always show only approved events for normal users
+        if (!isset($filters['approved'])) {
+            $filters['approved'] = true;
+        }
+        
         // Determine order by parameters
         $orderBy = [];
         $sort = $request->query->get('sort', 'date');
@@ -69,31 +80,27 @@ class EventFilterService
             }
         }
         
-        // Extract search
+        // Extract search query
         if ($request->query->has('search') && !empty($request->query->get('search'))) {
             $filters['search'] = $request->query->get('search');
         }
         
-        // Extract date filters
-        if ($request->query->has('date_from') && !empty($request->query->get('date_from'))) {
+        // Extract date filter - this is a single date field in the form, used as a date_from filter
+        if ($request->query->has('date') && !empty($request->query->get('date'))) {
             try {
-                $filters['date_from'] = new \DateTime($request->query->get('date_from'));
+                $date = new \DateTime($request->query->get('date'));
+                $filters['date_from'] = $date;
             } catch (\Exception $e) {
                 // Invalid date format, ignore
             }
         }
         
-        if ($request->query->has('date_to') && !empty($request->query->get('date_to'))) {
-            try {
-                $filters['date_to'] = new \DateTime($request->query->get('date_to'));
-            } catch (\Exception $e) {
-                // Invalid date format, ignore
+        // Extract location filter - using partial matching to match anywhere in the location string
+        if ($request->query->has('location') && $request->query->get('location') !== null) {
+            $location = trim($request->query->get('location'));
+            if ($location !== '') {
+                $filters['location'] = $location;
             }
-        }
-        
-        // Extract location filter
-        if ($request->query->has('location') && !empty($request->query->get('location'))) {
-            $filters['location'] = $request->query->get('location');
         }
         
         // Extract approved status filter (only for admins, to be checked in controller)

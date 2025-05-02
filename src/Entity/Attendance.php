@@ -11,6 +11,7 @@ class Attendance
 {
     public const STATUS_JOINED = 'joined';
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_MISSED = 'missed';
     
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -75,7 +76,7 @@ class Attendance
 
     public function setStatus(string $status): static
     {
-        if (!in_array($status, [self::STATUS_JOINED, self::STATUS_CANCELLED])) {
+        if (!in_array($status, [self::STATUS_JOINED, self::STATUS_CANCELLED, self::STATUS_MISSED])) {
             throw new \InvalidArgumentException("Invalid status: $status");
         }
         

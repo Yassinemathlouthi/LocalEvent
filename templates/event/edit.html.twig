@@ -4,101 +4,254 @@
 
 {% block body %}
     <!-- Edit Event Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card shadow">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="card-title mb-0">Edit Event</h3>
+                <div class="col-lg-10">
+                    <!-- Page Header Card -->
+                    <div class="dashboard-card animate-on-scroll mb-5">
+                        <div class="dashboard-card-header">
+                            <h4 class="dashboard-card-title">
+                                <i class="bi bi-pencil-square me-2"></i> Edit Event
+                            </h4>
                         </div>
-                        <div class="card-body">
-                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                                <div class="mb-3">
-                                    {{ form_label(form.title) }}
-                                    {{ form_widget(form.title) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.title) }}
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.description) }}
-                                    {{ form_widget(form.description) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.description) }}
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        {{ form_label(form.date) }}
-                                        {{ form_widget(form.date) }}
-                                        <div class="invalid-feedback">
-                                            {{ form_errors(form.date) }}
+                        <div class="dashboard-card-body">
+                            <p class="text-muted">Make changes to your event details and settings</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Form Card -->
+                    <div class="glass-card animate-on-scroll delay-1">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation modern-form', 'novalidate': 'novalidate'}}) }}
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <!-- Event Details Section -->
+                                    <div class="form-section mb-5">
+                                        <h5 class="text-gradient mb-4">
+                                            <i class="bi bi-info-circle me-2"></i> Event Details
+                                        </h5>
+                                        
+                                        <div class="form-group mb-4">
+                                            <label for="{{ form.title.vars.id }}" class="form-label">Event Title</label>
+                                            {{ form_widget(form.title, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Give your event a memorable title'}}) }}
+                                            <div class="invalid-feedback">
+                                                {{ form_errors(form.title) }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-4">
+                                            <label for="{{ form.description.vars.id }}" class="form-label">Description</label>
+                                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your event and what attendees can expect'}}) }}
+                                            <div class="invalid-feedback">
+                                                {{ form_errors(form.description) }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div class="form-group input-with-icon">
+                                                    <label for="{{ form.date.vars.id }}" class="form-label">Date</label>
+                                                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                                                    <i class="bi bi-calendar-date"></i>
+                                                    <div class="invalid-feedback">
+                                                        {{ form_errors(form.date) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group input-with-icon">
+                                                    <label for="{{ form.time.vars.id }}" class="form-label">Time</label>
+                                                    {{ form_widget(form.time, {'attr': {'class': 'form-control'}}) }}
+                                                    <i class="bi bi-clock"></i>
+                                                    <div class="invalid-feedback">
+                                                        {{ form_errors(form.time) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group input-with-icon mb-4">
+                                            <label for="{{ form.location.vars.id }}" class="form-label">Location</label>
+                                            {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'Where will your event take place?'}}) }}
+                                            <i class="bi bi-geo-alt"></i>
+                                            <div class="invalid-feedback">
+                                                {{ form_errors(form.location) }}
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group mb-4">
+                                            <label for="{{ form.categories.vars.id }}" class="form-label">Categories</label>
+                                            {{ form_widget(form.categories, {'attr': {'class': 'form-select', 'size': '5'}}) }}
+                                            <div class="form-text">
+                                                <i class="bi bi-info-circle text-primary me-1"></i>
+                                                Hold Ctrl (or Cmd on Mac) to select multiple categories.
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                {{ form_errors(form.categories) }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        {{ form_label(form.time) }}
-                                        {{ form_widget(form.time) }}
-                                        <div class="invalid-feedback">
-                                            {{ form_errors(form.time) }}
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <!-- Event Image Section -->
+                                    <div class="form-section mb-5">
+                                        <h5 class="text-gradient mb-4">
+                                            <i class="bi bi-image me-2"></i> Event Image
+                                        </h5>
+                                        
+                                        {% if event.image %}
+                                            <div class="current-image mb-4">
+                                                <div class="image-preview-container rounded overflow-hidden">
+                                                    <img src="{{ asset('uploads/events/' ~ event.image) }}" alt="{{ event.title }}" class="w-100 h-auto">
+                                                    <div class="image-overlay">
+                                                        <span>Current Image</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="form-group">
+                                            <label for="{{ form.imageFile.vars.id }}" class="form-label">Upload New Image</label>
+                                            <div class="file-upload-container">
+                                                <label for="{{ form.imageFile.vars.id }}" class="btn btn-outline w-100 p-4 text-center border-dashed position-relative">
+                                                    <i class="bi bi-cloud-arrow-up fs-1 d-block mb-2"></i>
+                                                    <span class="d-block mb-1">Drop your image here or click to browse</span>
+                                                    <small class="text-muted">Maximum 2MB. JPG or PNG only.</small>
+                                                    {{ form_widget(form.imageFile, {'attr': {'class': 'd-none'}}) }}
+                                                </label>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                {{ form_errors(form.imageFile) }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.location) }}
-                                    {{ form_widget(form.location) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.location) }}
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.categories) }}
-                                    {{ form_widget(form.categories) }}
-                                    <div class="form-text">You can select multiple categories by holding Ctrl (or Cmd on Mac).</div>
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.categories) }}
-                                    </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    {% if event.image %}
-                                        <div class="mb-3">
-                                            <p>Current image:</p>
-                                            <img src="{{ vich_uploader_asset(event, 'imageFile') }}" alt="{{ event.title }}" class="img-thumbnail" style="max-width: 200px">
+                                    
+                                    <!-- Admin Options Section -->
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <div class="form-section p-4 rounded border mb-4">
+                                            <h5 class="mb-3">Admin Options</h5>
+                                            <div class="form-check form-switch">
+                                                <input type="checkbox" name="event[is_approved]" id="event_is_approved" class="form-check-input" {% if event.getIsApproved %}checked{% endif %}>
+                                                <label class="form-check-label" for="event_is_approved">Approve Event</label>
+                                            </div>
                                         </div>
                                     {% endif %}
-                                    {{ form_label(form.imageFile) }}
-                                    {{ form_widget(form.imageFile) }}
-                                    <div class="form-text">Upload a new poster image for your event (optional).</div>
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.imageFile) }}
-                                    </div>
                                 </div>
-
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <div class="mb-3 form-check">
-                                        <input type="checkbox" name="event[is_approved]" id="event_is_approved" class="form-check-input" {% if event.getIsApproved %}checked{% endif %}>
-                                        <label class="form-check-label" for="event_is_approved">Approved</label>
-                                    </div>
-                                {% endif %}
-
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="bi bi-check-circle me-2"></i> Update Event
-                                    </button>
-                                    <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-arrow-left me-2"></i> Back to Event
-                                    </a>
-                                </div>
-                            {{ form_end(form) }}
-                        </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-3 justify-content-end mt-5">
+                                <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-outline btn-lg">
+                                    <i class="bi bi-x-circle me-2"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg ripple">
+                                    <i class="bi bi-check-circle me-2"></i> Save Changes
+                                </button>
+                            </div>
+                        {{ form_end(form) }}
                     </div>
                 </div>
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // File input enhancement
+            const imageFileInput = document.getElementById('{{ form.imageFile.vars.id }}');
+            const uploadLabel = imageFileInput ? imageFileInput.closest('label') : null;
+            
+            if (imageFileInput && uploadLabel) {
+                imageFileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        
+                        // Update the label to show selected file name
+                        const fileNameElement = document.createElement('div');
+                        fileNameElement.className = 'selected-file mt-2';
+                        fileNameElement.innerHTML = `<i class="bi bi-file-earmark-image text-primary me-1"></i> ${file.name}`;
+                        
+                        // Remove previously shown filename if exists
+                        const existingFileName = uploadLabel.querySelector('.selected-file');
+                        if (existingFileName) {
+                            existingFileName.remove();
+                        }
+                        
+                        uploadLabel.appendChild(fileNameElement);
+                        
+                        // Change label appearance
+                        uploadLabel.classList.add('border-primary');
+                        uploadLabel.style.backgroundColor = 'rgba(var(--primary-500-rgb), 0.05)';
+                    }
+                });
+                
+                // Handle drag and drop
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    uploadLabel.addEventListener(eventName, preventDefaults, false);
+                });
+                
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    uploadLabel.addEventListener(eventName, highlight, false);
+                });
+                
+                ['dragleave', 'drop'].forEach(eventName => {
+                    uploadLabel.addEventListener(eventName, unhighlight, false);
+                });
+                
+                function highlight() {
+                    uploadLabel.classList.add('border-primary');
+                    uploadLabel.style.backgroundColor = 'rgba(var(--primary-500-rgb), 0.1)';
+                }
+                
+                function unhighlight() {
+                    uploadLabel.classList.remove('border-primary');
+                    uploadLabel.style.backgroundColor = '';
+                }
+                
+                uploadLabel.addEventListener('drop', function(e) {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    
+                    if (files.length) {
+                        imageFileInput.files = files;
+                        // Trigger the change event manually
+                        const event = new Event('change');
+                        imageFileInput.dispatchEvent(event);
+                    }
+                });
+            }
+            
+            // Add ripple effect to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple-effect';
+                    
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+    </script>
 {% endblock %}

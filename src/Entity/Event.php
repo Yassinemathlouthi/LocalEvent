@@ -41,8 +41,8 @@ class Event
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ["default" => "CURRENT_TIMESTAMP"])]
     private ?\DateTimeInterface $created_at = null;
     
-    #[ORM\Column(nullable: true)]
-    private ?bool $is_approved = false;
+    #[ORM\Column(nullable: true, options: ["default" => true])]
+    private ?bool $is_approved = true;
 
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;

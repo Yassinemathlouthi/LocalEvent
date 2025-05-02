@@ -26,7 +26,7 @@ class UserDashboardController extends AbstractController
     {
         // Get user's events
         $user = $this->getUser();
-        $myEvents = $eventRepository->findBy(['organizer' => $user], ['date' => 'ASC']);
+        $myEvents = $eventRepository->findByOrganizer($user);
         
         // Get events the user is attending
         $attendances = $attendanceRepository->findUserAttendances($user);
@@ -38,7 +38,12 @@ class UserDashboardController extends AbstractController
     }
     
     #[Route('/profile', name: 'app_profile')]
-    public function profile(Request $request, EntityManagerInterface $entityManager): Response
+    public function profile(
+        Request $request, 
+        EntityManagerInterface $entityManager,
+        EventRepository $eventRepository,
+        AttendanceRepository $attendanceRepository
+    ): Response
     {
         $user = $this->getUser();
         $form = $this->createForm(ProfileType::class, $user);
@@ -51,8 +56,16 @@ class UserDashboardController extends AbstractController
             return $this->redirectToRoute('app_profile');
         }
         
+        // Count events created by user
+        $eventsCreated = count($eventRepository->findByOrganizer($user));
+        
+        // Count events the user is attending
+        $eventsAttending = count($attendanceRepository->findUserAttendances($user));
+        
         return $this->render('user_dashboard/profile.html.twig', [
             'profileForm' => $form->createView(),
+            'events_created' => $eventsCreated,
+            'events_attending' => $eventsAttending,
         ]);
     }
     
@@ -60,7 +73,7 @@ class UserDashboardController extends AbstractController
     public function myEvents(EventRepository $eventRepository): Response
     {
         $user = $this->getUser();
-        $myEvents = $eventRepository->findBy(['organizer' => $user], ['date' => 'ASC']);
+        $myEvents = $eventRepository->findByOrganizer($user);
         
         return $this->render('user_dashboard/my_events.html.twig', [
             'events' => $myEvents,

@@ -1,58 +1,95 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+<header class="navbar-container">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{{ path('app_home') }}">
-            <i class="bi bi-calendar-event text-primary me-2"></i>LocalEvent
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_home') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('event_index') }}">Events</a>
-                </li>
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Admin
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                            <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ path('admin_events') }}">Manage Events</a></li>
-                            <li><a class="dropdown-item" href="{{ path('admin_events_pending') }}">Approve Events</a></li>
-                            <li><a class="dropdown-item" href="{{ path('admin_users') }}">Manage Users</a></li>
-                            <li><a class="dropdown-item" href="{{ path('admin_categories') }}">Manage Categories</a></li>
-                        </ul>
-                    </li>
-                {% endif %}
-            </ul>
-            <div class="d-flex">
+        <nav class="navbar">
+            <a href="{{ path('app_home') }}" class="navbar-brand">
+                <span class="text-gradient">Local</span><span class="text-bold">Event</span>
+            </a>
+            
+            <div class="navbar-menu">
+                <a href="{{ path('app_home') }}" class="nav-link {% if app.request.get('_route') == 'app_home' %}active{% endif %}">
+                    <i class="bi bi-house"></i>
+                    <span>Home</span>
+                </a>
+                
+                <a href="{{ path('event_index') }}" class="nav-link {% if app.request.get('_route') starts with 'event_' and app.request.get('_route') != 'event_new' %}active{% endif %}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Events</span>
+                </a>
+                
+                <a href="#categories" class="nav-link">
+                    <i class="bi bi-grid"></i>
+                    <span>Categories</span>
+                </a>
+                
+                <a href="#about" class="nav-link">
+                    <i class="bi bi-info-circle"></i>
+                    <span>About</span>
+                </a>
+            </div>
+            
+            <div class="navbar-right">
+                <button class="dark-mode-toggle" aria-label="Toggle dark mode">
+                    <i class="bi bi-moon"></i>
+                    <i class="bi bi-sun"></i>
+                </button>
+                
                 {% if app.user %}
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i> {{ app.user.name }}
+                    <a href="{{ path('event_new') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Create Event</span>
+                    </a>
+                    
+                    <div class="user-dropdown">
+                        <button class="user-menu-toggle ripple" aria-expanded="false">
+                            {% if app.user.profilePicture is defined and app.user.profilePicture %}
+                                <img src="{{ asset('uploads/profile/' ~ app.user.profilePicture) }}" alt="{{ app.user.name ?? app.user.email }}">
+                            {% else %}
+                                <div class="avatar-placeholder pulse">
+                                    {{ app.user.name|default(app.user.email)|slice(0, 1)|upper }}
+                                </div>
+                            {% endif %}
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{{ path('app_dashboard') }}">My Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_profile') }}">Profile</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_my_events') }}">My Events</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_attending') }}">Events I'm Attending</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ path('event_new') }}">Create Event</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Logout</a>
-                            </li>
-                        </ul>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <strong>{{ app.user.name ?? app.user.email }}</strong>
+                                <span>{{ app.user.email }}</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ path('app_dashboard') }}" class="dropdown-item">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                            <a href="{{ path('app_profile') }}" class="dropdown-item">
+                                <i class="bi bi-person"></i> Profile
+                            </a>
+                            <a href="{{ path('app_my_events') }}" class="dropdown-item">
+                                <i class="bi bi-calendar-check"></i> My Events
+                            </a>
+                            <a href="{{ path('app_attending') }}" class="dropdown-item">
+                                <i class="bi bi-calendar-heart"></i> Attending
+                            </a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div class="dropdown-divider"></div>
+                                <a href="{{ path('admin_dashboard') }}" class="dropdown-item">
+                                    <i class="bi bi-gear"></i> Admin Panel
+                                </a>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ path('app_logout') }}" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a>
+                        </div>
                     </div>
                 {% else %}
-                    <a href="{{ path('app_login') }}" class="btn btn-outline-primary me-2">Log in</a>
+                    <a href="{{ path('app_login') }}" class="btn btn-ghost">Log in</a>
                     <a href="{{ path('app_register') }}" class="btn btn-primary">Sign up</a>
                 {% endif %}
             </div>
-        </div>
+            
+            <button class="navbar-mobile-toggle" aria-expanded="false" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
     </div>
-</nav>
+</header>
