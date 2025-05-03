@@ -3,83 +3,266 @@
 {% block title %}Create New Event - LocalEvent{% endblock %}
 
 {% block body %}
-    <!-- Create Event Section -->
-    <section class="py-5 bg-light">
+    <!-- Create Event Section with reduced top margin -->
+    <section class="pt-0 pb-5">
         <div class="container">
+            <!-- Animated page title with minimal spacing -->
+            <div class="position-relative mb-3 py-2">
+                <!-- Decorative elements with more color -->
+                <div class="position-absolute top-0 start-0 mt-4 d-none d-lg-block" style="transform: translateX(-30%);">
+                    <div style="width: 180px; height: 180px; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; background: var(--gradient-teal); opacity: 0.15; filter: blur(30px);"></div>
+                </div>
+                <div class="position-absolute top-50 end-0 d-none d-lg-block" style="transform: translateX(40%);">
+                    <div style="width: 220px; height: 220px; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; background: var(--gradient-purple); opacity: 0.15; filter: blur(35px);"></div>
+                </div>
+                
+                <div class="text-center animate-on-scroll">
+                    <div class="mb-3">
+                        <span class="badge badge-primary px-3 py-2 fs-6 animate-on-scroll delay-1">CREATE EVENT</span>
+                    </div>
+                    <h1 class="display-3 fw-bold text-gradient mb-3 animate-on-scroll">Create Your Amazing Event</h1>
+                    <p class="lead text-muted w-75 mx-auto mb-4">Share your event with the community and invite people to join in on the fun!</p>
+                    <div class="d-flex justify-content-center gap-2 animate-on-scroll delay-2">
+                        <span class="badge badge-success py-2 px-3">Easy to Set Up</span>
+                        <span class="badge badge-purple py-2 px-3">Customizable</span>
+                        <span class="badge badge-teal py-2 px-3">Share Instantly</span>
+                    </div>
+                </div>
+            </div>
+            
             <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card shadow">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="card-title mb-0">Create New Event</h3>
+                <div class="col-lg-11">
+                    <!-- Glassmorphism Card with more visual interest -->
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate-on-scroll delay-3 bg-pattern">
+                        <!-- Gradient header bar -->
+                        <div class="card-header border-0 p-0">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%; background: var(--gradient-blue);"></div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                                <div class="mb-3">
-                                    {{ form_label(form.title) }}
-                                    {{ form_widget(form.title) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.title) }}
-                                    </div>
+                        
+                        <!-- Form Area with enhanced background design elements -->
+                        <div class="card-body p-4 p-lg-5 position-relative">
+                            <!-- Decorative elements -->
+                            <div class="position-absolute top-0 end-0 mt-4 me-4 d-none d-lg-block">
+                                <div style="width: 200px; height: 200px; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; background: var(--gradient-purple); opacity: 0.07; filter: blur(40px);"></div>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 mb-4 ms-4 d-none d-lg-block">
+                                <div style="width: 180px; height: 180px; border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; background: var(--gradient-orange); opacity: 0.07; filter: blur(30px);"></div>
+                            </div>
+                            
+                            <!-- Form Title with more visual appeal -->
+                            <div class="d-flex align-items-center mb-5">
+                                <div class="bg-primary-10 p-3 rounded-circle me-3 pulse">
+                                    <i class="bi bi-calendar-plus text-primary fs-3"></i>
+                                    <div class="pulse-animation"></div>
                                 </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.description) }}
-                                    {{ form_widget(form.description) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.description) }}
-                                    </div>
+                                <div>
+                                    <h3 class="mb-1 fw-bold">Event Details</h3>
+                                    <p class="text-muted mb-0">Fill in the information below to create your event</p>
                                 </div>
+                            </div>
+                            
+                            <!-- Modern Form with improved spacing -->
+                            {{ form_start(form, {'attr': {'class': 'needs-validation modern-form', 'novalidate': 'novalidate'}}) }}
+                                <!-- Two column layout for larger screens -->
+                                <div class="row gx-4 gy-4">
+                                    <div class="col-lg-7">
+                                        <!-- Left column: Basic details -->
+                                        <div class="form-section p-4 bg-white shadow-sm rounded-4 mb-4 hover-card">
+                                            <div class="section-header d-flex align-items-center mb-4">
+                                                <div class="bg-blue-50 p-2 rounded-circle me-3">
+                                                    <i class="bi bi-info-circle text-primary fs-4"></i>
+                                                </div>
+                                                <h5 class="mb-0 text-gradient-blue">Basic Information</h5>
+                                            </div>
+                                            
+                                            <div class="form-group mb-4">
+                                                {{ form_label(form.title, 'Event Title', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                <div class="input-with-icon">
+                                                    {{ form_widget(form.title, {'attr': {'class': 'form-control custom-input', 'placeholder': 'Enter a catchy title for your event'}}) }}
+                                                    <i class="bi bi-type"></i>
+                                                </div>
+                                                <div class="form-error">
+                                                    {{ form_errors(form.title) }}
+                                                </div>
+                                            </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        {{ form_label(form.date) }}
-                                        {{ form_widget(form.date) }}
-                                        <div class="invalid-feedback">
-                                            {{ form_errors(form.date) }}
+                                            <div class="form-group mb-4">
+                                                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                <div class="input-with-icon textarea-container">
+                                                    {{ form_widget(form.description, {'attr': {'class': 'form-control custom-input', 'rows': '5', 'placeholder': 'Describe your event in detail - what can attendees expect?'}}) }}
+                                                    <i class="bi bi-text-paragraph"></i>
+                                                </div>
+                                                <div class="form-error">
+                                                    {{ form_errors(form.description) }}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group mb-0">
+                                                {{ form_label(form.location, 'Event Location', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                <div class="input-with-icon">
+                                                    {{ form_widget(form.location, {'attr': {'class': 'form-control custom-input', 'placeholder': 'Where will your event take place?'}}) }}
+                                                    <i class="bi bi-geo-alt"></i>
+                                                </div>
+                                                <div class="form-error">
+                                                    {{ form_errors(form.location) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Second section: Date and time -->
+                                        <div class="form-section p-4 bg-white shadow-sm rounded-4 mb-4 hover-card">
+                                            <div class="section-header d-flex align-items-center mb-4">
+                                                <div class="bg-purple-10 p-2 rounded-circle me-3">
+                                                    <i class="bi bi-calendar-date text-purple fs-4"></i>
+                                                </div>
+                                                <h5 class="mb-0 text-gradient-purple">When & What</h5>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6 mb-4">
+                                                    {{ form_label(form.date, 'Event Date', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                    <div class="date-input-wrapper">
+                                                        {{ form_widget(form.date, {'attr': {'class': 'form-control custom-input datepicker date-field', 'placeholder': 'Select a date'}}) }}
+                                                        <span class="date-icon">
+                                                            <i class="bi bi-calendar2-week"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="form-error">
+                                                        {{ form_errors(form.date) }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-4">
+                                                    {{ form_label(form.time, 'Event Time', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                    <div class="time-input-wrapper">
+                                                        {{ form_widget(form.time, {'attr': {'class': 'form-control custom-input timepicker time-field', 'placeholder': 'Select a time'}}) }}
+                                                        <span class="time-icon">
+                                                            <i class="bi bi-clock"></i>
+                                                        </span>
+                                                    </div>
+                                                    <div class="form-error">
+                                                        {{ form_errors(form.time) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                {{ form_label(form.categories, 'Event Categories', {'label_attr': {'class': 'form-label fw-semibold mb-2'}}) }}
+                                                <div class="styled-select-container">
+                                                    {{ form_widget(form.categories, {'attr': {'class': 'styled-select', 'data-placeholder': 'Select categories'}}) }}
+                                                    <div class="select-icon">
+                                                        <i class="bi bi-tags"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="category-helper d-flex align-items-center mt-2">
+                                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                                                    <span class="text-muted small">Hold <kbd>Ctrl</kbd> or <kbd>Cmd</kbd> to select multiple categories</span>
+                                                </div>
+                                                <div class="form-error">
+                                                    {{ form_errors(form.categories) }}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        {{ form_label(form.time) }}
-                                        {{ form_widget(form.time) }}
-                                        <div class="invalid-feedback">
-                                            {{ form_errors(form.time) }}
+                                    
+                                    <div class="col-lg-5">
+                                        <!-- Right column: Image upload and preview -->
+                                        <div class="form-section p-4 bg-white shadow-sm rounded-4 mb-4 h-100 hover-card">
+                                            <div class="section-header d-flex align-items-center mb-4">
+                                                <div class="bg-orange-10 p-2 rounded-circle me-3">
+                                                    <i class="bi bi-image text-orange fs-4"></i>
+                                                </div>
+                                                <h5 class="mb-0 text-gradient-orange">Event Image</h5>
+                                            </div>
+                                            
+                                            <div class="mb-4 text-center">
+                                                <!-- Image preview -->
+                                                <div class="image-preview-container mb-4 rounded-4 shadow-sm overflow-hidden" id="imagePreview">
+                                                    <div style="height: 220px; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, var(--neutral-100), var(--neutral-50));">
+                                                        <div class="text-center">
+                                                            <i class="bi bi-image text-neutral-400 mb-2" style="font-size: 3rem;"></i>
+                                                            <p class="text-muted small mb-0">No image selected yet</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="image-overlay">
+                                                        <span class="small">Preview will appear here</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Simplified file upload area with prominent button -->
+                                                {{ form_widget(form.imageFile, {'attr': {'class': 'file-input-hidden', 'id': 'event_imageFile_input'}}) }}
+                                                <div class="upload-box" id="dropZone">
+                                                    <div class="upload-content">
+                                                        <div class="upload-icon">
+                                                            <i class="bi bi-cloud-arrow-up"></i>
+                                                        </div>
+                                                        <h6 class="upload-text">Add an image for your event</h6>
+                                                        
+                                                        <button type="button" class="btn-file-upload" id="customFileBtn">
+                                                            <i class="bi bi-image-fill me-2"></i>Browse Images
+                                                        </button>
+                                                        
+                                                        <p class="upload-or mt-3">or drag and drop</p>
+                                                        <div class="upload-file-types">
+                                                            <span class="file-type">JPG</span>
+                                                            <span class="file-type">PNG</span>
+                                                            <span class="file-type">GIF</span>
+                                                            <span class="dot-separator">•</span>
+                                                            <span class="file-size">Max 5MB</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Selected file info -->
+                                                <div class="selected-file d-none" id="fileInfo">
+                                                    <i class="bi bi-file-earmark-image me-2"></i>
+                                                    <span id="fileName" class="text-truncate">No file selected</span>
+                                                    <button type="button" class="btn btn-sm text-danger ms-auto" id="removeFile">
+                                                        <i class="bi bi-x-circle"></i>
+                                                    </button>
+                                                </div>
+                                                
+                                                <div class="form-error mt-2">
+                                                    {{ form_errors(form.imageFile) }}
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Quick tips for better events - Enhanced design -->
+                                            <div class="event-tips mt-4 p-4 rounded-4" style="background: var(--glass-white-light);">
+                                                <h6 class="d-flex align-items-center mb-3">
+                                                    <span class="tip-icon">
+                                                        <i class="bi bi-lightbulb-fill"></i>
+                                                    </span>
+                                                    Quick Tips for Success
+                                                </h6>
+                                                <ul class="tips-list ps-4 mb-0">
+                                                    <li class="mb-2 small"><strong>High-quality images</strong> attract up to 40% more attendees</li>
+                                                    <li class="mb-2 small"><strong>Detailed descriptions</strong> help people decide if your event is right for them</li>
+                                                    <li class="small"><strong>Relevant categories</strong> ensure you reach the right audience</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.location) }}
-                                    {{ form_widget(form.location) }}
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.location) }}
+                                
+                                <!-- Submit buttons with enhanced styling -->
+                                <div class="form-actions p-4 mt-4 rounded-4 d-flex flex-wrap justify-content-between align-items-center gap-3 action-gradient">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success-10 p-2 rounded-circle me-3">
+                                            <i class="bi bi-check-circle text-success"></i>
+                                        </div>
+                                        <p class="mb-0 text-white">Ready to create your event?</p>
                                     </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    {{ form_label(form.categories) }}
-                                    {{ form_widget(form.categories) }}
-                                    <div class="form-text">You can select multiple categories by holding Ctrl (or Cmd on Mac).</div>
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.categories) }}
+                                    <div class="d-flex gap-3">
+                                        <a href="{{ path('event_index') }}" class="btn btn-glass btn-lg px-4">
+                                            <i class="bi bi-arrow-left me-2"></i> Back to Events
+                                        </a>
+                                        <button class="btn btn-primary btn-lg px-4 pulse" type="submit">
+                                            <i class="bi bi-calendar-plus me-2"></i> Create Event 
+                                            <div class="pulse-animation"></div>
+                                        </button>
                                     </div>
-                                </div>
-
-                                <div class="mb-4">
-                                    {{ form_label(form.imageFile) }}
-                                    {{ form_widget(form.imageFile) }}
-                                    <div class="form-text">Upload an image for your event (optional).</div>
-                                    <div class="invalid-feedback">
-                                        {{ form_errors(form.imageFile) }}
-                                    </div>
-                                </div>
-
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" type="submit">
-                                        <i class="bi bi-check-circle me-2"></i> Create Event
-                                    </button>
-                                    <a href="{{ path('event_index') }}" class="btn btn-outline-secondary">
-                                        <i class="bi bi-arrow-left me-2"></i> Back to Events
-                                    </a>
                                 </div>
                             {{ form_end(form) }}
                         </div>
@@ -88,4 +271,710 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // File upload handling
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('event_imageFile_input');
+            const removeFile = document.getElementById('removeFile');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            // Handle file selection with improved debugging
+            fileInput.addEventListener('change', function(e) {
+                console.log('File input change event triggered');
+                console.log('Files selected:', this.files);
+                if (this.files && this.files.length > 0) {
+                    console.log('File name:', this.files[0].name);
+                    console.log('File size:', this.files[0].size);
+                    console.log('File type:', this.files[0].type);
+                } else {
+                    console.log('No files selected');
+                }
+                handleFiles(this.files);
+            });
+            
+            // Make sure the button properly triggers the file input
+            const customFileBtn = document.getElementById('customFileBtn');
+            customFileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Custom button clicked, triggering file input click');
+                // Directly trigger the native file input
+                fileInput.click();
+            });
+            
+            // Drag and drop functionality
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('active-drop');
+            });
+            
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('active-drop');
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('active-drop');
+                
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            // Remove selected file
+            removeFile.addEventListener('click', function() {
+                fileInput.value = '';
+                fileInfo.classList.add('d-none');
+                imagePreview.innerHTML = `
+                    <div style="height: 220px; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, var(--neutral-100), var(--neutral-50));">
+                        <div class="text-center">
+                            <i class="bi bi-image text-neutral-400 mb-2" style="font-size: 3rem;"></i>
+                            <p class="text-muted small mb-0">No image selected yet</p>
+                        </div>
+                    </div>
+                    <div class="image-overlay">
+                        <span class="small">Preview will appear here</span>
+                    </div>
+                `;
+            });
+            
+            // Enhanced file handling function with better error handling and feedback
+            function handleFiles(files) {
+                console.log('handleFiles called with', files.length, 'files');
+                
+                if (!files || files.length === 0) {
+                    console.log('No files provided to handleFiles function');
+                    return;
+                }
+                
+                const file = files[0];
+                console.log('Processing file:', file.name);
+                
+                try {
+                    // Check if file is an image
+                    if (!file.type.match('image.*')) {
+                        alert('Please select an image file (JPG, PNG or GIF)');
+                        console.error('File is not an image:', file.type);
+                        return;
+                    }
+                    
+                    // Check file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('File size should not exceed 5MB');
+                        console.error('File too large:', file.size);
+                        return;
+                    }
+                    
+                    // Display file info
+                    fileName.textContent = file.name;
+                    fileInfo.classList.remove('d-none');
+                    console.log('File info updated:', file.name);
+                    
+                    // Create image preview
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        console.log('FileReader onload event triggered');
+                        imagePreview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview" style="width: 100%; height: 220px; object-fit: cover;">
+                            <div class="image-overlay">
+                                <span class="small">${file.name}</span>
+                            </div>
+                        `;
+                        console.log('Image preview updated');
+                    };
+                    
+                    reader.onerror = function(e) {
+                        console.error('FileReader error:', e);
+                        alert('Error reading the file. Please try another image.');
+                    };
+                    
+                    console.log('Starting to read file as DataURL');
+                    reader.readAsDataURL(file);
+                } catch (error) {
+                    console.error('Error handling file:', error);
+                    alert('Error processing the selected file. Please try again.');
+                }
+            }
+            
+            // Animate elements on scroll
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+            
+            function checkScroll() {
+                animateElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementTop < windowHeight * 0.9) {
+                        element.classList.add('animated');
+                    }
+                });
+            }
+            
+            // Initial check and scroll event
+            checkScroll();
+            window.addEventListener('scroll', checkScroll);
+            
+            // Submit button ripple effect
+            document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+                if (!e.target.closest('form').checkValidity()) {
+                    return;
+                }
+                
+                const btn = this;
+                btn.classList.add('position-relative', 'overflow-hidden');
+                
+                const x = e.clientX - btn.getBoundingClientRect().left;
+                const y = e.clientY - btn.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.classList.add('btn-ripple');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                btn.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+
+            // Add input focus effects for better visual feedback
+            const formInputs = document.querySelectorAll('.form-control, .styled-select');
+            formInputs.forEach(input => {
+                // Add floating label effect
+                input.addEventListener('focus', function() {
+                    this.parentNode.classList.add('input-focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentNode.classList.remove('input-focused');
+                    }
+                });
+                
+                // Check if input already has value on page load
+                if (input.value) {
+                    input.parentNode.classList.add('input-focused');
+                }
+            });
+        });
+    </script>
+    
+    <style>
+        /* Background pattern */
+        .bg-pattern {
+            background-color: white;
+            background-image: radial-gradient(var(--neutral-100) 1px, transparent 0);
+            background-size: 25px 25px;
+        }
+        
+        /* Enhanced title styles */
+        .display-3 {
+            font-size: 3.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        /* Form sections styling */
+        .form-section {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(var(--neutral-200-rgb), 0.5);
+        }
+        
+        .form-section:hover {
+            box-shadow: var(--shadow-md) !important;
+            transform: translateY(-5px);
+            border-color: var(--primary-200);
+        }
+        
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--neutral-200);
+        }
+        
+        /* Enhanced input styling */
+        .custom-input {
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .custom-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-500-rgb), 0.15);
+            border-color: var(--primary-300);
+            background-color: white;
+        }
+        
+        /* Input container effects */
+        .input-with-icon, .date-input-wrapper, .time-input-wrapper, .styled-select-container, .textarea-container {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .input-with-icon i, .select-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-400);
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .input-with-icon input:focus + i,
+        .input-with-icon.input-focused i,
+        .textarea-container.input-focused i,
+        .styled-select-container.input-focused .select-icon i {
+            color: var(--primary-500);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .input-with-icon input,
+        .input-with-icon textarea,
+        .styled-select {
+            padding-left: 2.75rem;
+        }
+        
+        /* Fix textarea icon alignment */
+        .textarea-container {
+            position: relative;
+        }
+        
+        .textarea-container i {
+            position: absolute;
+            left: 1rem;
+            top: 1rem !important;
+            transform: none !important;
+        }
+        
+        .textarea-container textarea {
+            padding-left: 2.75rem;
+        }
+        
+        .textarea-container.input-focused i {
+            color: var(--primary-500);
+            transform: scale(1.1) !important;
+        }
+        
+        /* Fixed date and time input styling */
+        .date-input-wrapper, .time-input-wrapper {
+            position: relative;
+        }
+        
+        .date-field, .time-field {
+            padding-right: 2.5rem;
+        }
+        
+        .date-icon, .time-icon {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            color: var(--neutral-400);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .date-input-wrapper:focus-within .date-icon,
+        .time-input-wrapper:focus-within .time-icon {
+            color: var(--primary-500);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* Form label animation */
+        .form-label {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focused + .form-label {
+            color: var(--primary-500);
+            font-weight: 600;
+        }
+        
+        /* Enhanced styled select */
+        .styled-select-container {
+            position: relative;
+            border-radius: var(--radius-lg);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--neutral-200);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .styled-select-container:hover {
+            border-color: var(--primary-300);
+        }
+        
+        .styled-select {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.75rem;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: var(--neutral-700);
+            font-size: 0.95rem;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .styled-select:focus {
+            outline: none;
+        }
+        
+        .styled-select-container:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-500-rgb), 0.15);
+            border-color: var(--primary-300);
+            background-color: white;
+        }
+        
+        .select-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral-400);
+            z-index: 1;
+        }
+        
+        .styled-select-container:focus-within .select-icon {
+            color: var(--primary-500);
+        }
+        
+        .styled-select-container::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--neutral-500);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .styled-select-container:focus-within::after {
+            border-top-color: var(--primary-500);
+        }
+        
+        /* Category helper */
+        .category-helper kbd {
+            background-color: var(--neutral-700);
+            color: white;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-family: var(--font-family);
+        }
+        
+        /* Enhanced file upload area */
+        .upload-box {
+            background: linear-gradient(135deg, #0984ff, #1a56ff);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(9, 132, 255, 0.3);
+            display: block; /* Ensure it's a block element */
+            margin-bottom: 1rem;
+            z-index: 10; /* Ensure it's above other elements */
+            text-align: center;
+        }
+        
+        /* Beautiful upload button */
+        .btn-file-upload {
+            background: white;
+            color: var(--primary-600);
+            border: none;
+            border-radius: 30px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 20;
+        }
+        
+        .btn-file-upload:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            background: #f8f9fa;
+        }
+        
+        .btn-file-upload:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Shine effect on the button */
+        .btn-file-upload::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(30deg);
+            transition: all 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        
+        .btn-file-upload:hover::after {
+            left: 120%;
+        }
+        
+        .upload-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            pointer-events: none;
+        }
+        
+        .upload-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(9, 132, 255, 0.4);
+        }
+        
+        .upload-box.active-drop {
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(9, 132, 255, 0.5);
+        }
+        
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .upload-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .upload-or {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.75rem;
+        }
+        
+        .upload-file-types {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .file-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .file-size {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .dot-separator {
+            opacity: 0.7;
+        }
+        
+        /* Properly hide the native file input but ensure it's accessible to JavaScript */
+        .file-input-hidden {
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Selected file styling */
+        .selected-file {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(var(--primary-500-rgb), 0.1);
+            border-radius: var(--radius-lg);
+            margin-top: 0.5rem;
+        }
+        
+        /* Animation for on-scroll elements */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
+        
+        /* Form validation styles */
+        .form-error {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Required field indicator */
+        .form-label.required:after {
+            content: " *";
+            color: var(--error);
+        }
+        
+        /* Enhanced tips section */
+        .event-tips {
+            position: relative;
+            border-left: 3px solid var(--warning);
+        }
+        
+        .tip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(var(--warning-rgb), 0.2);
+            color: var(--warning);
+            border-radius: 50%;
+            margin-right: 0.75rem;
+        }
+        
+        .tips-list li {
+            position: relative;
+            padding-left: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .tips-list li::marker {
+            color: var(--primary-400);
+        }
+        
+        .tips-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Form actions section with gradient */
+        .action-gradient {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background: var(--gradient-blue);
+            border: none;
+            box-shadow: var(--shadow-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Create pulse animation on button */
+        .pulse {
+            position: relative;
+        }
+        
+        .pulse-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: inherit;
+            animation: pulse-animation 2s infinite;
+            z-index: 0;
+        }
+        
+        @keyframes pulse-animation {
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+        }
+        
+        /* Background color utilities */
+        .bg-purple-10 {
+            background-color: rgba(var(--purple-500-rgb), 0.1);
+        }
+        
+        .bg-orange-10 {
+            background-color: rgba(var(--accent-500-rgb), 0.1);
+        }
+        
+        .bg-success-10 {
+            background-color: rgba(var(--success-rgb), 0.1);
+        }
+        
+        /* Color utilities */
+        .text-purple {
+            color: var(--purple-500);
+        }
+        
+        .text-orange {
+            color: var(--accent-500);
+        }
+    </style>
 {% endblock %}
